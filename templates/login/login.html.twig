@@ -2,19 +2,27 @@
 
 {% block title %}Connexion{% endblock %}
 
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
+{% endblock %}
+
 {% block body %}
-    <div class="container mt-5">
-        <h1>Connexion</h1>
-        <form>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Entrez votre email">
-            </div>
-            <div class="mb-3">
-                <label for="mdp" class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" id="mdp" placeholder="Mot de passe">
-            </div>
-            <button type="submit" class="btn btn-primary">Se connecter</button>
-        </form>
-    </div>
+    <nav id="nav-login">
+        <div class="container p-5">
+            <center><h3 class="mb-4">CONNEXION</h3></center>
+            <form>
+                <div class="mb-4">
+                    <input type="email" class="form-control" id="email" placeholder="Adresse e-mail">
+                </div>
+                <div class="mb-2">
+                    <input type="password" class="form-control" id="mdp" placeholder="Mot de passe">
+                </div>
+                <div class="mb-4 d-flex justify-content-end">
+                    <a href="" id="forget">Mot de passe oublié?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="login">Se connecter</button>
+            </form>
+        </div>
+    </nav>
 {% endblock %}

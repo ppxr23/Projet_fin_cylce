@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RH{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('assets/css/rh.css') }}">
+{% endblock %}
+
+{% block body %}
+    <nav id="content">
+        <div id="app"></div>
+        <script src="{{ asset('build/app.js') }}"></script>
+    </nav>
+{% endblock %}
