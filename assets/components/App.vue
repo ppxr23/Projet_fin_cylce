@@ -1,13 +1,13 @@
 <template>
-    <rh-dashboard />
+    <rh-Vue />
 </template>
 
 <script>
-import RhDashboard from './RhDashboard.vue';
+import RhVue from './RhVue.vue';
 
 export default {
   components: {
-    RhDashboard
+    RhVue
   }
 }
 </script>

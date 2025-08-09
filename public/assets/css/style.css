@@ -18,31 +18,3 @@ body{
     display: flex;
     gap: 10px;
 }
-
-#menu-verticale{
-    background-color: #ffffff;
-    width: max-content;
-    height: 100%;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-#menu{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#menu-content{
-    background-color: #ffffff;
-    width: 75%;
-    height: 100%;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-#menu a{
-    text-decoration: none;
-    color: #000;
-    padding: 10px;
-}
