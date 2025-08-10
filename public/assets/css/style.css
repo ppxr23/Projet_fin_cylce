@@ -1,20 +1,21 @@
-body{
+body {
     background-color: #f1f1f1;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 98vh;
+    width: 99vw;
+    height: max-content;
+    padding: 10px;
 }
 
-#content{
-    width: 95%;
-    height: 95%;
+#content {
+    width: 98%;
+    height: max-content;
 }
 
-#app{
+#app {
     width: 100%;
-    height: 100%;
+    height: max-content;
     display: flex;
     gap: 10px;
 }

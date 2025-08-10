@@ -25,6 +25,8 @@ Encore
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
 
+    .enableVueLoader()
+
     // will require an extra script tag for runtime.js
     // but, you probably want this, unless you're building a single-page app
     .enableSingleRuntimeChunk()
@@ -72,6 +74,11 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
     .enableVueLoader(() => {}, { version: 3 })
+    
+    .copyFiles({
+        from: './node_modules/@fortawesome/fontawesome-free/webfonts',
+        to: 'webfonts/[path][name].[ext]'
+    })
 
 ;
 
