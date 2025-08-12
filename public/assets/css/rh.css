@@ -1,7 +1,7 @@
 #menu-verticale {
     background-color: #ffffff !important;
     width: 300px;
-    height: 70rem;
+    height: 73rem;
     padding: 10px;
     border-radius: 10px;
 }
@@ -70,3 +70,16 @@
     margin: 20px;
 }
 
+.feedback_name {
+    background-color: grey;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 5px;
+    height: max-content;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 5px 20px;
+    margin: 20px;
+}

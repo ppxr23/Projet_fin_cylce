@@ -23,10 +23,10 @@ export default {
     new Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['Red', 'Blue', 'Yellow'],
+        labels: ['Retard', 'Absence', 'Sanction'],
         datasets: [{
           data: [30, 45, 25],
-          backgroundColor: ['#ff6384', '#36a2eb', '#ffce56']
+          backgroundColor: ['#ff6384', '#6C757D', '#ffce56']
         }]
       },
       options: {

@@ -8,15 +8,18 @@
     </div>
   </nav>
   <nav id="menu-content">
-    <dashboard />
+    <!-- <dashboard /> -->
+    <user_manage />
   </nav>
 </template>
 
 <script>
     import Dashboard from './rh/Dashboard.vue';
+    import User_manage from './rh/User_manage.vue';
     export default {
       components: {
-        Dashboard
+        Dashboard,
+        User_manage,
       }
     }
 </script>

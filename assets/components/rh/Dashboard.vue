@@ -44,33 +44,56 @@
     </div>
 
     <div class="d-flex mt-3" style="gap: 5%;">
-        <div style="width: 45%; min-width: 300px;" class="mt-3 d-flex flex-column gap-5">
+        <div style="width: 45%; min-width: 400px;" class="mt-3 d-flex flex-column gap-5">
             <div class="chart-container">
-                <h3 class="mb-2">Performance par équipe <font-awesome-icon :icon="['fas', 'line-chart']" style="font-size: 30px; color: #0096C7;" aria-hidden="true" /></h3>
+                <h3 class="mb-2"><center>Performance par équipe <font-awesome-icon :icon="['fas', 'line-chart']" style="font-size: 30px; color: #0096C7;" aria-hidden="true" /></center></h3>
                 <ChartBars />
             </div>
             <div class="chart-container">
-                <h3 class="mb-2">Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></h3>
-                <ChartCircu style="width: 300px; height: 300px;"/>
+                <h3 class="mb-2"><center>Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></center></h3>
+                <center><ChartCircu style="width: 400px; height: 400px;"/></center>
             </div>
         </div>
 
-        <div class="mt-3" style="width: 45%;">
-            <h3 class="mb-2">Alertes anomalie <font-awesome-icon :icon="['fas', 'exclamation-triangle']" style="font-size: 30px; color: red;" aria-hidden="true" /></h3>
-            <div class="m-2 d-flex flex-column p-2" style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: 100%; overflow-y: scroll;">
-                <div class="d-flex gap-2 align-items-center w-100 m-0  anomalie" style="border-bottom: 2px solid #00000028;">
-                    <span class="danger"><center>Elevés</center></span>
-                    <div>
-                        <h5 class="m-0">Jean Dupont</h5>
-                        <p class="m-0">Absences fréquente</p>
+        <div class="mt-3 d-flex flex-column gap-3" style="width: 45%;">
+            <div>
+                <h3 class="mb-2"><center>Alertes anomalie <font-awesome-icon :icon="['fas', 'exclamation-triangle']" style="font-size: 30px; color: red;" aria-hidden="true" /></center></h3>
+                <div class="m-2 d-flex flex-column p-2" style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;">
+                    <div class="d-flex gap-2 align-items-center w-100 m-0  anomalie" style="border-bottom: 2px solid #00000028;">
+                        <span class="danger"><center>Elevés</center></span>
+                        <div>
+                            <h5 class="m-0">Jean Dupont</h5>
+                            <p class="m-0">Absences fréquente</p>
+                        </div>
+                    </div>
+    
+                    <div class="d-flex gap-2 align-items-center w-100 m-0 anomalie" style="border-bottom: 2px solid #00000028;">
+                        <span class="warning"><center>Moyennes</center></span>
+                        <div>
+                            <h5 class="m-0">Jean Dupont</h5>
+                            <p class="m-0">Absences fréquente</p>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="d-flex gap-2 align-items-center w-100 m-0 anomalie" style="border-bottom: 2px solid #00000028;">
-                    <span class="warning"><center>Moyennes</center></span>
-                    <div>
-                        <h5 class="m-0">Jean Dupont</h5>
-                        <p class="m-0">Absences fréquente</p>
+            <div>
+                <h3 class="mb-2"><center> Feedback <font-awesome-icon :icon="['fas', 'comment-dots']" style="font-size: 30px; color: #6f42c1;" aria-hidden="true" /></center></h3>
+                <div class="m-2 d-flex flex-column p-2" style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;">
+                    <div class="d-flex gap-2 align-items-center w-100 m-0  anomalie" style="border-bottom: 2px solid #00000028;">
+                        <span class="feedback_name"><center>Jean Dupont</center></span>
+                        <div>
+                            <h5 class="m-0"><u>Note:</u> 5</h5>
+                            <p class="m-0"><u>Commentaire:</u> Soit sérieux</p>
+                        </div>
+                    </div>
+    
+                    <div class="d-flex gap-2 align-items-center w-100 m-0 anomalie" style="border-bottom: 2px solid #00000028;">
+                        <span class="feedback_name"><center>Jean Dupont</center></span>
+                        <div>
+                            <h5 class="m-0"><u>Note:</u> 5</h5>
+                            <p class="m-0"><u>Commentaire:</u> Soit sérieux</p>
+                        </div>
                     </div>
                 </div>
             </div>
