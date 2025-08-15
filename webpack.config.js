@@ -74,7 +74,8 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
     .enableVueLoader(() => {}, { version: 3 })
-    
+
+    .autoProvidejQuery()
     .copyFiles({
         from: './node_modules/@fortawesome/fontawesome-free/webfonts',
         to: 'webfonts/[path][name].[ext]'
