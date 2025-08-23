@@ -13,6 +13,7 @@
     border-radius: 4px;
     margin-bottom: 5px;
     transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
 }
 
 #menu a.nav-link:hover {
@@ -82,4 +83,16 @@
     align-items: center;
     padding: 5px 20px 5px 20px;
     margin: 20px;
+}
+
+.stars {
+  display: flex !important;
+}
+
+.stars svg {
+  margin-right: 6px !important;
+}
+
+.stars svg:last-child {
+  margin-right: 0 !important;
 }

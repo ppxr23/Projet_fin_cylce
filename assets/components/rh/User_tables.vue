@@ -1,23 +1,21 @@
 <template>
   <div>
     <!-- Filtres -->
-    <div class="row mb-3">
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Rechercher par nom" v-model="filters.nom" @input="applyFilters">
+    <div class="row mb-4">
+      <div class="col-md-2">
+        <input type="text" class="form-control" placeholder=" 🔍︎   Rechercher par nom" v-model="filters.nom" @input="applyFilters">
       </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Rechercher par email" v-model="filters.email" @input="applyFilters">
-      </div>
-      <div class="col-md-3">
+      <div class="col-md-1">
         <select class="form-select" v-model="filters.role" @change="applyFilters">
-          <option value="">Tous les rôles</option>
+          <option value="">Rôles</option>
           <option value="Admin">Admin</option>
-          <option value="Utilisateur">Utilisateur</option>
+          <option value="rh">RH</option>
+          <option value="employe">employé</option>
         </select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-1">
         <select class="form-select" v-model="filters.actif" @change="applyFilters">
-          <option value="">Tous les statuts</option>
+          <option value="">Statut</option>
           <option value="true">Actif</option>
           <option value="false">Inactif</option>
         </select>
@@ -26,30 +24,39 @@
 
     <!-- Tableau -->
     <div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <thead class="table-light">
+      <table class="table table-striped">
+        <thead class="">
           <tr>
+            <th>ID</th>
             <th>Nom</th>
             <th>Email</th>
             <th>Rôle</th>
             <th>Statut</th>
-            <th>Dernière connexion</th>
+            <th>Date de création</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(user, index) in filteredUsers" :key="index">
+            <td>{{ user.id }}</td>
             <td>{{ user.nom }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
             <td>
-              <span v-if="user.actif" class="badge bg-success">Actif</span>
-              <span v-else class="badge bg-secondary">Inactif</span>
+              <span v-if="user.actif" class="badge bg-success" style="width: 100px; padding: 10px;">Actif</span>
+              <span v-else class="badge bg-secondary" style="width: 100px; padding: 10px;">Inactif</span>
             </td>
             <td>{{ user.derniereConnexion }}</td>
-            <td>
-              <button class="btn btn-sm btn-primary me-1">Modifier</button>
-              <button class="btn btn-sm btn-danger">Supprimer</button>
+            <td class="d-flex gap-3">
+              <a href="">
+                <font-awesome-icon :icon="['fas', 'fa-pencil']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+              </a>
+              <a href="">
+                <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+              </a>
+              <a href="">
+                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+              </a>
             </td>
           </tr>
         </tbody>
@@ -70,9 +77,9 @@ export default {
         actif: ''
       },
       users: [
-        { nom: 'Jean Dupont', email: 'jean@example.com', role: 'Admin', actif: true, derniereConnexion: '2025-08-14 14:30' },
-        { nom: 'Marie Curie', email: 'marie@example.com', role: 'Utilisateur', actif: false, derniereConnexion: '2025-08-13 09:12' },
-        { nom: 'Paul Martin', email: 'paul@example.com', role: 'Utilisateur', actif: true, derniereConnexion: '2025-08-10 16:45' }
+        { id:1, nom: 'Jean Dupont', email: 'jean@example.com', role: 'Admin', actif: true, derniereConnexion: '2025-08-14 14:30' },
+        { id:2, nom: 'Marie Curie', email: 'marie@example.com', role: 'Utilisateur', actif: false, derniereConnexion: '2025-08-13 09:12' },
+        { id:3, nom: 'Paul Martin', email: 'paul@example.com', role: 'Utilisateur', actif: true, derniereConnexion: '2025-08-10 16:45' }
       ]
     };
   },
