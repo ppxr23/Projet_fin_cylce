@@ -1,15 +1,14 @@
 body {
-    background-color: #f1f1f1;
+    background-color: #ffffff !important;   
     display: flex;
     justify-content: center;
     align-items: center;
     width: 99vw;
     height: max-content;
-    padding: 10px;
 }
 
 #content {
-    width: 98%;
+    width: 100%;
     height: max-content;
 }
 

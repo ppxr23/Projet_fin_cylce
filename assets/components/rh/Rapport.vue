@@ -1,12 +1,12 @@
 <template>
-    <h2 class="mt-3">Génération de rapport</h2>
+    <h2 class="mb-3">Génération de rapport</h2>
 
-    <div class="mt-4 d-flex flex-column col-md-4">
+    <div class="mt-4 d-flex flex-column col-md-5">
         <h5>Nom du rapport </h5>
         <input type="text" name="" id="" class="form-control form-control-lg">
     </div>
 
-    <div class="mt-4 d-flex flex-column col-md-4">
+    <div class="mt-4 d-flex flex-column col-md-5">
         <h5>Type de rapport </h5>
         <select class="form-select form-select-lg md-1">
             <option value="1">Résumé</option>
@@ -14,8 +14,8 @@
         </select>
     </div>
 
-     <div class="mt-4 d-flex flex-column col-md-4">
-        <h5>Période </h5>
+    <h5 class="mt-4">Période </h5>
+     <div class="mt-2 d-flex col-md-5 gap-5">
         <div class="form-check">
             <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio1" value="option1" checked>
             <label class="form-check-label form-check-label-lg" for="radio1">

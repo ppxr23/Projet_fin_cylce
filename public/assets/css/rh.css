@@ -1,9 +1,9 @@
 #menu-verticale {
-    background-color: #ffffff !important;
+    background-color: #f1f1f1;
     width: 300px;
-    height: 73em;
+    height: 99vh;
     padding: 10px;
-    border-radius: 10px;
+    position: fixed;
 }
 
 #menu a.nav-link {
@@ -28,10 +28,10 @@
 }
 
 #menu-content {
-    background-color: #ffffff;
     flex-grow: 1;
     border-radius: 10px;
     padding: 20px;
+    margin-left: 320px;
 }
 
 .element-dash, .anomalie {

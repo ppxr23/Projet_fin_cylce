@@ -52,10 +52,10 @@
                 <font-awesome-icon :icon="['fas', 'fa-pencil']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
               </a>
               <a href="">
-                <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+                <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: red;" aria-hidden="true" />
               </a>
               <a href="">
-                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: blue ;" aria-hidden="true" />
               </a>
             </td>
           </tr>

@@ -12,10 +12,10 @@
 
   <h4 class="mt-5">Critères d'évaluation :</h4>
 
-  <div class="mt-3 ms-3" v-for="(critere, index) in criteres" :key="index">
+  <div class="mt-2 ms-3" v-for="(critere, index) in criteres" :key="index">
     <h5 class="me-2" style="width: 170px;">{{ critere.nom }}</h5>
     <div class="d-flex gap-3 align-items-center mb-4">
-      <Vue3StarRatings
+      <!-- <Vue3StarRatings
         v-model="critere.note"
         class="stars"
         :starSize="26"
@@ -23,7 +23,8 @@
         inactiveColor="#000000"
         :numberOfStars="5"
         :disableClick="false"
-      />
+      /> -->
+      <input type="range" class="col-md-4">
       <p class="mb-0 ms-2">Note : {{ critere.note }}</p>
     </div>
   </div>
