@@ -1,5 +1,5 @@
 <template>
-  <h2>Feedback - Évaluation du collaborateur</h2>
+  <h2>Feedback - N + 1</h2>
 
   <div class="mt-4 d-flex gap-3 col-md-5 align-items-center">
     <h5>Collaborateur: </h5>

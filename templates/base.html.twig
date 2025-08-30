@@ -5,17 +5,20 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+            <div id="app" data-page="{{ page }}"></div>
         {% endblock %}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
+
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     </body>
 </html>

@@ -24,7 +24,7 @@ Encore
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
-
+    
     .enableVueLoader()
 
     // will require an extra script tag for runtime.js

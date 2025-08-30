@@ -14,3 +14,4 @@ app.component('font-awesome-icon', FontAwesomeIcon);
 app.mount('#app');
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
 registerVueControllerComponents();
+

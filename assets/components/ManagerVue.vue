@@ -13,18 +13,6 @@
          @click="menu_ele = 2">
          <font-awesome-icon :icon="['fas', 'comments']" style="font-size: 18px;" aria-hidden="true" />
          &nbsp; Feedbacks</a>
-
-      <a class="nav-link" 
-         :class="{ active: menu_ele === 3 }" 
-         @click="menu_ele = 3">
-         <font-awesome-icon :icon="['fas', 'file-text']" style="font-size: 18px;" aria-hidden="true" />
-         &nbsp; Rapports</a>
-
-      <a class="nav-link" 
-         :class="{ active: menu_ele === 4 }" 
-         @click="menu_ele = 4">
-         <font-awesome-icon :icon="['fas', 'users-gear']" style="font-size: 18px;" aria-hidden="true" />
-         &nbsp; Gestion d'utilisateurs</a>
     </div>
 
     <div id="menu" class="nav flex-column">
@@ -43,8 +31,8 @@
            <font-awesome-icon :icon="['fas', 'user']" style="font-size: 20px; color: #6C757D;" aria-hidden="true" />
         </div>
         <div class="d-flex flex-column gap-1">
-          <h6 class="m-0">Marie Dubois</h6>
-          <p class="m-0">marie@company.com</p>
+          <h6 class="m-0">Jean Dupont</h6>
+          <p class="m-0">jean@company.com</p>
         </div>
       </div>
     </div>
@@ -54,21 +42,18 @@
     <Dashboard v-if="menu_ele === 1" />
     <Feedback v-if="menu_ele === 2" />
     <Rapport v-if="menu_ele ===3" />
-    <User_manage v-else-if="menu_ele === 4" />
   </nav>
 </template>
 
 <script>
-import Dashboard from './rh/Dashboard.vue';
-import Feedback from './rh/Feedback.vue';
-import Rapport from './rh/Rapport.vue';
-import User_manage from './rh/User_manage.vue';
+import Dashboard from './manager/Dashboard.vue';
+import Feedback from './manager/Feedback.vue';
+import Rapport from './manager/Rapport.vue';
 
 export default {
   components: {
     Dashboard,
     Feedback,
-    User_manage,
     Rapport
   },
   data() {
