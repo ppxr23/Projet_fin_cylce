@@ -4,3 +4,4 @@ export function parseJwt(token) {
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   return JSON.parse(atob(base64));
 }
+  

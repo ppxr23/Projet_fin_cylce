@@ -1,3 +1,4 @@
+# config/packages/security.yaml
 security:
     password_hashers:
         App\Entity\User:
@@ -34,5 +35,23 @@ security:
             provider: app_user_provider
 
     access_control:
+        # Route de login accessible sans authentification
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        
+        # Routes admin réservées aux utilisateurs avec ROLE_RH_ADMIN
+        - { path: ^/api/admin, roles: ROLE_RH_ADMIN }
+        
+        # Routes manager réservées aux ROLE_MANAGER et supérieurs
+        - { path: ^/api/manager, roles: ROLE_MANAGER }
+        
+        # Routes utilisateur standard
+        - { path: ^/api/user, roles: ROLE_USER }
+        
+        # Toutes les autres routes API nécessitent une authentification
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+    # Hiérarchie des rôles - Les rôles supérieurs héritent des permissions
+    role_hierarchy:
+        ROLE_RH_ADMIN: [ROLE_MANAGER, ROLE_USER]  # Admin RH a tous les droits
+        ROLE_MANAGER: [ROLE_USER]                 # Manager hérite de USER
+        ROLE_USER: []                             # Rôle de base

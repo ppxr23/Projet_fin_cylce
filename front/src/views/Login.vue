@@ -32,7 +32,6 @@
           </button>
         </form>
 
-        <!-- message d'erreur -->
         <p v-if="error" class="text-danger mt-3">{{ error }}</p>
       </div>
     </nav>
@@ -59,7 +58,6 @@ export default {
           password: this.password
         });
 
-        // stocker le token
         localStorage.setItem("token", res.data.token);
         const token = localStorage.getItem("token");
         const user = parseJwt(token);
