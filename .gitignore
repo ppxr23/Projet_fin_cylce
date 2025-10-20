@@ -1,26 +1,35 @@
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
-###< symfony/framework-bundle ###
+# Docker
+.env.local
+.env.*.local
+docker-compose.override.yml
 
-###> phpunit/phpunit ###
-/phpunit.xml
-/.phpunit.cache/
-###< phpunit/phpunit ###
-
-###> symfony/asset-mapper ###
-/assets/vendor/
-###< symfony/asset-mapper ###
-
-###> symfony/webpack-encore-bundle ###
-/node_modules/
-/public/build/
+# Node
+node_modules/
 npm-debug.log
-yarn-error.log
-###< symfony/webpack-encore-bundle ###
+dist/
+build/
+
+# PHP
+vendor/
+.env
+.env.local
+var/logs/
+var/cache/
+
+# Système
+.DS_Store
+Thumbs.db
+*.log
+.DS_Store
+__pycache__/
+
+# OSX
+.AppleDouble
+.AppleDB
