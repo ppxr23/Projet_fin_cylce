@@ -28,15 +28,21 @@ services:
     container_name: vivetic-backend
     environment:
       APP_ENV: ${APP_ENV:-dev}
-      APP_DEBUG: ${APP_DEBUG:-1}
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres123}@postgres:5432/${DB_NAME:-vivetic_rh}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-vivetic_secret_key_dev}
+      APP_DEBUG: ${APP_DEBUG:-1}
+      # Configuration JWT correcte
+      JWT_SECRET_KEY: '%kernel.project_dir%/config/jwt/private.pem'
+      JWT_PUBLIC_KEY: '%kernel.project_dir%/config/jwt/public.pem'
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-220168a8d8f7df999fc507c1c4b8328f7db1ab0e8374307b516c164e8e36aaaf}
       CORS_ALLOW_ORIGIN: http://localhost:3000
     ports:
-      - "8000:9000"
+      - "8000:8000"
     volumes:
       - ./backend:/app
       - /app/var
+      - /app/vendor
+      # Monter les clés JWT
+      - ./backend/config/jwt:/app/config/jwt:ro
     depends_on:
       postgres:
         condition: service_healthy

@@ -17,7 +17,7 @@ CREATE TABLE "users" (
 -- Table Employee
 CREATE TABLE employee (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL UNIQUE REFERENCES "user"(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL UNIQUE REFERENCES "users"(id) ON DELETE CASCADE,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     position VARCHAR(255),
@@ -58,7 +58,7 @@ CREATE TABLE report (
     title VARCHAR(255) NOT NULL,
     content TEXT,
     report_type VARCHAR(100),
-    created_by UUID NOT NULL REFERENCES "user"(id),
+    created_by UUID NOT NULL REFERENCES "users"(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -72,7 +72,7 @@ CREATE INDEX idx_evaluation_date ON evaluation(evaluation_date);
 CREATE INDEX idx_feedback_from ON feedback(from_employee_id);
 CREATE INDEX idx_feedback_to ON feedback(to_employee_id);
 CREATE INDEX idx_report_created_by ON report(created_by);
-CREATE INDEX idx_user_email ON "user"(email);
+CREATE INDEX idx_user_email ON "users"(email);
 
 -- Insérer des données de test
 INSERT INTO "users" (email, password, roles, name) VALUES

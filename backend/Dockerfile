@@ -1,36 +1,60 @@
-FROM php:8.1-fpm-alpine AS builder
+# === Étape 1 : Build avec Composer et extensions ===
+FROM php:8.3-fpm-alpine AS builder
 
 WORKDIR /app
 
+# Installer dépendances de compilation et PHP extensions
 RUN apk add --no-cache \
+    bash \
     curl \
     git \
-    postgresql-dev \
+    unzip \
     libpng-dev \
     libjpeg-turbo-dev \
+    libzip-dev \
+    oniguruma-dev \
+    icu-dev \
+    postgresql-dev \
     zlib-dev
 
-RUN docker-php-ext-install pdo pdo_pgsql gd
+RUN docker-php-ext-configure gd --with-jpeg
+RUN docker-php-ext-install pdo pdo_pgsql gd zip intl opcache
 
+# Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copier le code backend
 COPY backend/ .
 
-RUN composer install --no-dev --optimize-autoloader 2>&1 | grep -v "Deprecation Notice" || true
+# Définir l'environnement Symfony
+ENV APP_ENV=dev
 
-FROM php:8.1-fpm-alpine
+# Installer les dépendances PHP
+RUN composer install
+
+# === Étape 2 : Image finale ===
+FROM php:8.3-fpm-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache postgresql-libs curl
+# Installer libs nécessaires à GD et PostgreSQL
+RUN apk add --no-cache \
+    libpng \
+    libjpeg-turbo \
+    libzip \
+    icu \
+    postgresql-libs \
+    bash \
+    curl
 
+# Copier extensions compilées et config PHP
 COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
+
+# Copier le code backend
 COPY --from=builder /app /app
 
-EXPOSE 9000
+# Pour dev : lancer Symfony server intégré
+EXPOSE 8000
 
-HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
-    CMD curl -f http://localhost:9000/ping || exit 1
-
-CMD ["php-fpm"]
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
