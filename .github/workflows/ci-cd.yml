@@ -58,9 +58,15 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress --no-scripts
         working-directory: ./backend
 
+      - name: Run Symfony setup scripts
+        run: |
+          php bin/console cache:clear --no-warmup || true
+          php bin/console importmap:install || true
+        working-directory: ./backend
+              
       - name: Create JWT keys
         run: |
           mkdir -p config/jwt
