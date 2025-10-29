@@ -80,6 +80,7 @@ jobs:
           echo "APP_ENV=test" > .env
           echo "APP_DEBUG=1" >> .env
           echo "DATABASE_URL=postgresql://postgres:postgres123@127.0.0.1:5432/vivetic_rh_test?serverVersion=16&charset=utf8" >> .env
+          echo "MESSENGER_TRANSPORT_DSN=doctrine://default" >> .env
 
       - name: Setup database
         working-directory: ./backend
