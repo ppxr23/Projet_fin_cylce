@@ -74,6 +74,12 @@ jobs:
           openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
         working-directory: ./backend
 
+      - name: Create .env file
+        run: |
+          echo "APP_ENV=test" > .env
+          echo "APP_DEBUG=1" >> .env
+          echo "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/test_db?serverVersion=16&charset=utf8" >> .env
+
       - name: Setup database
         env:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
