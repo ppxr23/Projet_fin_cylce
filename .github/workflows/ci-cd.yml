@@ -75,33 +75,34 @@ jobs:
         working-directory: ./backend
 
       - name: Create .env file
+        working-directory: ./backend
         run: |
           echo "APP_ENV=test" > .env
           echo "APP_DEBUG=1" >> .env
-          echo "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/test_db?serverVersion=16&charset=utf8" >> .env
+          echo "DATABASE_URL=postgresql://postgres:postgres123@127.0.0.1:5432/vivetic_rh_test?serverVersion=16&charset=utf8" >> .env
 
       - name: Setup database
+        working-directory: ./backend
         env:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
         run: |
           php bin/console doctrine:database:create --if-not-exists --env=test
           php bin/console doctrine:schema:create --env=test
-        working-directory: ./backend
 
       - name: Run PHPUnit tests
+        working-directory: ./backend
         env:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
         run: php bin/phpunit --coverage-clover coverage.xml
-        working-directory: ./backend
 
       - name: Run PHPStan (Static Analysis)
-        run: vendor/bin/phpstan analyse src --level=8 --no-progress
         working-directory: ./backend
+        run: vendor/bin/phpstan analyse src --level=8 --no-progress
         continue-on-error: true
 
       - name: Run PHP CodeSniffer
-        run: vendor/bin/phpcs src --standard=PSR12 --report=summary
         working-directory: ./backend
+        run: vendor/bin/phpcs src --standard=PSR12 --report=summary
         continue-on-error: true
 
       - name: Upload coverage reports
