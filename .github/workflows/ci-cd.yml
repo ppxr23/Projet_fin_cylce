@@ -164,6 +164,8 @@ jobs:
   security-scan:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     
     steps:
       - name: Checkout code
@@ -181,8 +183,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-        permissions:
-          security-events: write
 
   # ========================================
   # JOB 4: Build Docker Images
