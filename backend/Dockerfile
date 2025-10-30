@@ -26,6 +26,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copier le code backend
 COPY backend/ .
 
+COPY backend/.env .env
+
 # Définir l'environnement Symfony
 ENV APP_ENV=dev
 
