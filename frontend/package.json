@@ -22,6 +22,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/vue-fontawesome": "^3.1.2",
     "axios": "^1.6.0",
+    "bootstrap": "^5.3.8",
     "chart.js": "^4.4.0",
     "lucide-vue-next": "^0.263.0",
     "pinia": "^2.1.0",
