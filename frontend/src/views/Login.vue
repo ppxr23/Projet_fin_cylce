@@ -14,15 +14,24 @@
               placeholder="Adresse e-mail"
             />
           </div>
-          <div class="mb-2">
+
+          <div class="mb-2 input-group password-group">
             <input
               v-model="password"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               class="form-control"
               id="mdp"
               placeholder="Mot de passe"
             />
+            <span class="input-group-text eye-icon" @click="togglePassword">
+              <font-awesome-icon
+                :icon="showPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
+                class="animate-eye"
+                style="font-size: 20px; color: #16738A;"
+              />
+            </span>
           </div>
+
           <div class="mb-4 d-flex justify-content-end">
             <a href="" id="forget">Mot de passe oublié?</a>
           </div>
@@ -47,10 +56,14 @@ export default {
     return {
       email: "",
       password: "",
+      showPassword: false,
       error: null
     };
   },
   methods: {
+    togglePassword() {
+      this.showPassword = !this.showPassword;
+    },
     async login() {
       try {
         const res = await api.post("login_check", {
@@ -58,23 +71,14 @@ export default {
           password: this.password
         });
 
-        localStorage.setItem("token", res.data.token);
-        const token = localStorage.getItem("token");
+        sessionStorage.setItem("token", res.data.token);
+        const token = sessionStorage.getItem("token");
         const user = parseJwt(token);
-        console.log(user.roles);
 
-        if (user.roles == 'RH'){
-            this.$router.push("/rh");
-        }
-        else if (user.roles == 'COLLABORATEUR'){
-            this.$router.push("/collab");
-        }
-        else if (user.roles == 'MANAGER'){
-            this.$router.push("/manager");
-        }
-        else {
-            this.error = "Rôle non défini"
-        }
+        if (user.roles[0] === 'RH') this.$router.push('/rh');
+        else if (user.roles[0] === 'MANAGER') this.$router.push('/manager');
+        else if (user.roles[0] === 'COLLABORATEUR') this.$router.push('/collab');
+        else this.error = "Rôle non défini";
       } catch (err) {
         this.error = "Identifiants invalides";
       }
@@ -101,12 +105,13 @@ export default {
 }
 
 #login {
-  background-color: #16738A;
+  background-color: #16738a;
   color: #fff;
   width: 100%;
 }
 
 #forget {
-  color: #16738A;
+  color: #16738a;
 }
+
 </style>

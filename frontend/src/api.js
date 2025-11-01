@@ -1,7 +1,17 @@
 import axios from "axios";
 
+let baseURL;
+
+if (window.location.hostname === "localhost") {
+  baseURL = "http://localhost:8000/api";
+} else if (window.location.hostname.startsWith("192.168.")) {
+  baseURL = `http://${window.location.hostname}:8000/api`;
+} else {
+  baseURL = "http://backend:8000/api";
+}
+
 const api = axios.create({
-  baseURL: "http://localhost:8000/api"
+  baseURL
 });
 
 api.interceptors.request.use(config => {
@@ -11,6 +21,5 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
-
 
 export default api;
