@@ -51,6 +51,11 @@
 import api from "../api";
 import { parseJwt } from "../utils/jwt";
 
+if (sessionStorage.getItem("token")){
+  const connected = parseJwt(sessionStorage.getItem("token"));
+  console.log(connected)
+}
+
 export default {
   data() {
     return {
@@ -59,6 +64,17 @@ export default {
       showPassword: false,
       error: null
     };
+  },
+  mounted(){
+    if (sessionStorage.getItem("token")){
+      const connected = parseJwt(sessionStorage.getItem("token"));
+
+      console.log(connected)
+      if (connected.roles[0] === 'RH') this.$router.push('/rh');
+      else if (connected.roles[0] === 'MANAGER') this.$router.push('/manager');
+      else if (connected.roles[0] === 'COLLABORATEUR') this.$router.push('/collab');
+      else this.error = "Rôle non défini";
+    }
   },
   methods: {
     togglePassword() {
@@ -72,6 +88,7 @@ export default {
         });
 
         sessionStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.token);
         const token = sessionStorage.getItem("token");
         const user = parseJwt(token);
 

@@ -33,7 +33,7 @@
       <a style="color: black; text-decoration: none; cursor: pointer;" class="ps-3 pt-2  pb-2">
         <font-awesome-icon :icon="['fas', 'cog']" style="font-size: 16px; color: black" aria-hidden="true" />
         &nbsp; Paramètres</a>
-      <a style="color: red; text-decoration: none; cursor: pointer;" class="ps-3 pt-2 pb  -2">
+      <a style="color: red; text-decoration: none; cursor: pointer;" class="ps-3 pt-2 pb  -2" @click="delogin" >
         <font-awesome-icon :icon="['fas', 'sign-out']" style="font-size: 16px; color: red" aria-hidden="true" />
         &nbsp; Déconnexion</a>
 
@@ -63,6 +63,8 @@ import Dashboard from './rh/Dashboard.vue';
 import Feedback from './rh/Feedback.vue';
 import Rapport from './rh/Rapport.vue';
 import User_manage from './rh/User_manage.vue';
+import api from "../api";
+import { parseJwt } from "../utils/jwt";
 
 export default {
   components: {
@@ -74,6 +76,24 @@ export default {
   data() {
     return {
       menu_ele: 1
+    }
+  },
+  mounted(){
+    if (!sessionStorage.getItem("token")){
+      this.$router.push('/')
+    }
+  },
+  methods: {
+    async delogin() {
+      try {
+        const res = await api.post("/deconnexion");
+        console.log(res.data);
+
+        sessionStorage.removeItem("token"); // efface token après logout
+        this.$router.push('/'); // retour login
+      } catch (err) {
+        console.error("Erreur déconnexion :", err.response?.data || err);
+      }
     }
   }
 }
