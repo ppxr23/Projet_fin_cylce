@@ -22,11 +22,19 @@
           </div>
 
           <div class="mb-4">
+            <input type="text" v-model="newUser.firstname" placeholder="Prénom" class="form-control" style="height: 50px;" required>
+          </div>
+
+          <div class="mb-4">
             <input type="email" v-model="newUser.email" placeholder="Email" class="form-control" style="height: 50px;" required>
           </div>
 
           <div class="mb-4">
-            <select v-model="newUser.role" class="form-select" style="height: 50px;" required>
+            <input type="number" v-model="newUser.matricule" placeholder="Matricule" class="form-control" style="height: 50px;" required>
+          </div>
+
+          <div class="mb-4">
+            <select v-model="newUser.roles" class="form-select" style="height: 50px;" required>
               <option value="">Sélectionner un rôle</option>
               <option value="MANAGER">Manager</option>
               <option value="RH">RH</option>
@@ -35,7 +43,7 @@
           </div>
 
           <div class="mb-4">
-            <select v-model="newUser.status" class="form-select" style="height: 50px;" required>
+            <select v-model="newUser.statut" class="form-select" style="height: 50px;" required>
               <option value="">Sélectionner le statut</option>
               <option :value="true">Actif</option>
               <option :value="false">Inactif</option>
@@ -43,8 +51,8 @@
           </div>
 
           <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-danger" @click="showModal = false" style="width: 200px; padding: 10px; font-weight: bold;">Annuler</button>
-            <button type="submit" class="btn btn-success" style="width: 200px; padding: 10px; font-weight: bold;">Enregistrer</button>
+            <button type="button" class="btn btn-danger" @click="showModal = false" style="width: 250px; padding: 10px; font-weight: bold;">Annuler</button>
+            <button type="submit" class="btn btn-success" style="width: 250px; padding: 10px; font-weight: bold;">Enregistrer</button>
           </div>
 
         </form>
@@ -57,6 +65,7 @@
 
 <script>
     import User_tables from './User_tables.vue';
+    import api from "../../api";
     
     export default {
       components: {
@@ -67,18 +76,23 @@
             showModal: false,
             newUser: {
                 name: '',
+                firstname: '',
                 email: '',
-                role: '',
-                status: true
+                matricule: 0,
+                roles: '',
+                statut: true
             }
             };
         },
         methods: {
             addUser() {
             console.log("Nouvel utilisateur :", this.newUser);
+            const res = api.post("add_user", this.newUser);
+
+            console.log(res);
 
             this.showModal = false;
-            this.newUser = { name: '', email: '', role: '', status: true };
+            this.newUser = { name: '', firstname: '', email: '', matricule: 0, roles: '', statut: true };
             }
         }
     }
@@ -101,6 +115,6 @@
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
-  width: 500px;
+  width: 600px;
 }
 </style>

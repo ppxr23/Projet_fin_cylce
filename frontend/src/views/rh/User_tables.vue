@@ -67,6 +67,7 @@
 <script>
 import api from "../../api";
 import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2';
 
 export default {
   name: 'UserTable',
@@ -121,24 +122,23 @@ export default {
 
     },
     async deleteUser(userId) {
-      const toast = useToast();
-      if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) return;
+       const result = await Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Vous ne pourrez pas revenir en arrière !",
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Oui, supprimer',
+        confirmButtonColor: '#d33'
+      });
 
-      try {
-
-        await api.delete(`delete_user/${userId}`);
-
-        this.users = this.users.filter(user => user.id !== userId);
-        toast.success("Utilisateur supprimé avec succès !");
-      } catch (err) {
-        if (err.response) {
-          if (err.response.status === 401 && err.response.data.message === "Expired JWT Token") {
-            toast.error("Session expiré");
-          } else {
-            toast.error = "Identifiants invalides";
-          }
-        } else {
-          toast.error("Erreur de connexion au serveur");
+      if (result.isConfirmed) {
+        try {
+          await api.delete(`delete_user/${userId}`);
+          this.users = this.users.filter(u => u.id !== userId);
+          Swal.fire('Supprimé !', 'Utilisateur supprimé avec succès.', 'success');
+        } catch (err) {
+          Swal.fire('Erreur', 'Impossible de supprimer l’utilisateur.', 'error');
         }
       }
     }

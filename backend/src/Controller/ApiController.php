@@ -12,6 +12,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class ApiController extends AbstractController
 {
@@ -25,7 +28,7 @@ class ApiController extends AbstractController
     #[Route('/api/deconnexion', name: 'api_deconnexion', methods: ['POST'])]
     public function deconnexion(UserInterface $user, EntityManagerInterface $em): JsonResponse
     {
-        $newDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
         $user->setLastConnexion($newDate);
 
         $em->persist($user);
@@ -66,6 +69,31 @@ class ApiController extends AbstractController
         $em->flush();
 
         return $this->json(['message' => 'Utilisateur supprimé'], Response::HTTP_OK);
+    }
+
+    #[Route('/api/add_user', name: 'api_add_user', methods: ['POST'])]
+    public function addUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $user = new User();
+        $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
+        $hashedPassword = $passwordHasher->hashPassword($user, $data['password'] ?? 'vivetic');
+        
+        $user->setEmail($data['email'] ?? '');
+        $user->setRoles([$data['roles']] ?? '');
+        $user->setName($data['name'] ?? '');
+        $user->setFirstname($data['firstname'] ?? '');
+        $user->setPassword($hashedPassword);
+        $user->setStatut($data['statut'] ?? '');
+        $user->setDateCreation($newDate ?? '');
+        $user->setLastConnexion($newDate ?? '');
+        $user->setMatricule($data['matricule'] ?? '');
+
+        $em->persist($user);
+        $em->flush();
+
+        return $this->json(['message' => 'Utilisateur ajouté avec succès'], Response::HTTP_CREATED);
     }
 
 }

@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTime $last_connexion = null;
 
+    #[ORM\Column]
+    private ?int $matricule = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,12 +114,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getStatut(): ?int
+    public function getStatut(): ?bool
     {
         return $this->statut;
     }
 
-    public function setStatut(?boo $statut): static
+    public function setStatut(?bool $statut): self
     {
         $this->statut = $statut;
 
@@ -148,6 +151,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastConnexion(\DateTime $last_connexion): static
     {
         $this->last_connexion = $last_connexion;
+
+        return $this;
+    }
+
+    public function getMatricule(): ?int
+    {
+        return $this->matricule;
+    }
+
+    public function setMatricule(int $matricule): static
+    {
+        $this->matricule = $matricule;
 
         return $this;
     }
