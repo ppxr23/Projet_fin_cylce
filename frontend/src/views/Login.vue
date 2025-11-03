@@ -97,7 +97,15 @@ export default {
         else if (user.roles[0] === 'COLLABORATEUR') this.$router.push('/collab');
         else this.error = "Rôle non défini";
       } catch (err) {
-        this.error = "Identifiants invalides";
+        if (err.response) {
+          if (err.response.status === 401 && err.response.data.detail === "Votre compte est désactivé.") {
+            this.error = "Votre compte est désactivé";
+          } else {
+            this.error = "Identifiants invalides";
+          }
+        } else {
+          this.error = "Erreur de connexion au serveur";
+        }
       }
     }
   }

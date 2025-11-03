@@ -65,6 +65,12 @@ import Rapport from './rh/Rapport.vue';
 import User_manage from './rh/User_manage.vue';
 import api from "../api";
 import { parseJwt } from "../utils/jwt";
+import { useToast } from "vue-toastification";
+
+if (sessionStorage.getItem("token")){
+  const connected = parseJwt(sessionStorage.getItem("token"));
+  console.log(connected)
+}
 
 export default {
   components: {
@@ -87,12 +93,19 @@ export default {
     async delogin() {
       try {
         const res = await api.post("/deconnexion");
-        console.log(res.data);
 
-        sessionStorage.removeItem("token"); // efface token après logout
-        this.$router.push('/'); // retour login
+        sessionStorage.removeItem("token");
+        this.$router.push('/');
       } catch (err) {
-        console.error("Erreur déconnexion :", err.response?.data || err);
+        if (err.response) {
+          if (err.response.status === 401 && err.response.data.detail === "Votre compte est désactivé.") {
+            this.error = "Votre compte est désactivé";
+          } else {
+            this.error = "Identifiants invalides";
+          }
+        } else {
+          console.error("Erreur déconnexion :", err.response?.data || err);
+        }
       }
     }
   }

@@ -32,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstname = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $statut = null;
+    private ?bool $statut = true;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $date_creation = null;
@@ -116,11 +116,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->statut;
     }
 
-    public function setStatut(?int $statut): static
+    public function setStatut(?boo $statut): static
     {
         $this->statut = $statut;
 
         return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->statut;
     }
 
     public function getDateCreation(): ?\DateTime
