@@ -14,14 +14,12 @@ class JWTCreatedListener
             return;
         }
 
-        // Récupère le contenu actuel du token
         $data = $event->getData();
 
-        // Ajoute le nom et prénom
         $data['name'] = $user->getName();
         $data['firstname'] = $user->getFirstname();
+        $data['matricule'] = $user->getMatricule();
 
-        // Réinjecte le nouveau payload
         $event->setData($data);
     }
 }

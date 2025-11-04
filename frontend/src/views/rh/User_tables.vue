@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in filteredUsers" :key="index">
+          <tr v-for="(user, index) in filteredUsers.filter(u => u.email !== this.connected.username)" :key="index">
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.firstname }}</td>
@@ -58,7 +58,7 @@
                 <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: red;" />
               </a>
               <a >
-                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: blue;" />
+                <font-awesome-icon :icon="['fas', 'history']" style="font-size: 25px; color: orange;" />
               </a>
             </td>
           </tr>
@@ -71,6 +71,7 @@
 <script>
 import api from "../../api";
 import Swal from 'sweetalert2';
+import { parseJwt } from "../../utils/jwt";
 
 export default {
   name: 'UserTable',
@@ -78,12 +79,20 @@ export default {
   data() {
     return {
       filters: { nom: '', email: '', role: '', actif: '' },
-      users: []
+      users: [],
+      connected: {}
     };
   },
 
   async mounted() {
     this.fetchUsers();
+    
+    if (!sessionStorage.getItem("token")){
+      this.$router.push('/')
+    }
+    else {
+      this.connected = parseJwt(sessionStorage.getItem("token"));
+    }
   },
 
   methods: {
@@ -113,7 +122,13 @@ export default {
         try {
           await api.delete(`delete_user/${userId}`);
           this.users = this.users.filter(u => u.id !== userId);
-          Swal.fire('Supprimé !', 'Utilisateur supprimé avec succès.', 'success');
+          Swal.fire({
+            title: 'Supprimé !',
+            text: 'Utilisateur supprimé avec succès.',
+            icon: 'success',
+            confirmButtonText: 'Fermer',
+            confirmButtonColor: '#16738A'
+          });
         } catch (err) {
           Swal.fire('Erreur', 'Impossible de supprimer l’utilisateur.', 'error');
         }

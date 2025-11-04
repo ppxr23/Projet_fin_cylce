@@ -110,17 +110,30 @@ export default {
 
     async addUser() {
       try {
-        if (this.isEditing) {
+       if (this.isEditing) {
           const res = await api.put(`update_user/${this.newUser.id}`, this.newUser);
           if (res.data.message === "Utilisateur mis à jour avec succès") {
-            Swal.fire('Modifié !', 'Utilisateur mis à jour avec succès.', 'success');
+            Swal.fire({
+              title: 'Modifié !',
+              text: 'Utilisateur mis à jour avec succès.',
+              icon: 'success',
+              confirmButtonText: 'Fermer',
+              confirmButtonColor: '#16738A'
+            });
           }
         } else {
           const res = await api.post("add_user", this.newUser);
           if (res.data.message === "Utilisateur ajouté avec succès") {
-            Swal.fire('Ajouté !', 'Utilisateur ajouté avec succès.', 'success');
+            Swal.fire({
+              title: 'Ajouté !',
+              text: 'Utilisateur ajouté avec succès.',
+              icon: 'success',
+              confirmButtonText: 'Fermer',
+              confirmButtonColor: '#16738A'
+            });
           }
         }
+
 
         this.$refs.userTable.fetchUsers();
       } catch (err) {

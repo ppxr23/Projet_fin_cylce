@@ -49,6 +49,7 @@
 import Dashboard from './collab/Dashboard.vue';
 import Feedback from './collab/Feedback.vue';
 import api from "../api";
+import { parseJwt } from "../utils/jwt";
 
 export default {
   components: {

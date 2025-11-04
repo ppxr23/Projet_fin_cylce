@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Feedback;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -95,6 +96,76 @@ class ApiController extends AbstractController
         $em->flush();
 
         return $this->json(['message' => 'Utilisateur ajouté avec succès'], Response::HTTP_CREATED);
+    }
+
+    #[Route('/api/update_user/{id}', name: 'api_update_user', methods: ['PUT', 'PATCH'])]
+    public function updateUser( int $id, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        $user = $em->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            return $this->json(['message' => 'Utilisateur introuvable'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['email'])) {
+            $user->setEmail($data['email']);
+        }
+
+        if (isset($data['roles'])) {
+            $user->setRoles([$data['roles']]);
+        }
+
+        if (isset($data['name'])) {
+            $user->setName($data['name']);
+        }
+
+        if (isset($data['firstname'])) {
+            $user->setFirstname($data['firstname']);
+        }
+
+        if (isset($data['statut'])) {
+            $user->setStatut($data['statut']);
+        }
+
+        if (isset($data['matricule'])) {
+            $user->setMatricule($data['matricule']);
+        }
+
+        $em->flush();
+
+        return $this->json(['message' => 'Utilisateur mis à jour avec succès'], Response::HTTP_OK);
+    }
+
+    #[Route('/api/add_feedback', name: 'api_add_feedback', methods: ['POST'])]
+    public function addFeedback(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data) {
+            return $this->json(['message' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $feedback = new Feedback();
+        $now = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
+
+        // Récupération des données envoyées depuis le frontend
+        $feedback->setMatriculeConcerned($data['matricule_concerned'] ?? 0);
+        $feedback->setMatriculeInsert($data['matricule_insert'] ?? 0);
+        $feedback->setDateInserted($now);
+        $feedback->setCritere1($data['critere_1'] ?? 0);
+        $feedback->setCritere2($data['critere_2'] ?? 0);
+        $feedback->setCritere3($data['critere_3'] ?? 0);
+        $feedback->setCritere4($data['critere_4'] ?? 0);
+        $feedback->setCritere5($data['critere_5'] ?? 0);
+        $feedback->setCommentary($data['commentary'] ?? '');
+        $feedback->setTypeFeedback($data['type_feedback'] ?? 0);
+
+        $em->persist($feedback);
+        $em->flush();
+
+        return $this->json(['message' => 'Feedback ajouté avec succès'], Response::HTTP_CREATED);
     }
 
 }
