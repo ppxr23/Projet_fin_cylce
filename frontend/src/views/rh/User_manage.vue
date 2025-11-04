@@ -1,22 +1,29 @@
 <template>
+  <div>
     <div class="d-flex w-100 justify-content-between mb-3">
-        <h2> Gestion des utilisateurs</h2>
-        
-        <div class="d-flex gap-3">
-            <a class="btn d-flex gap-2" style="padding: 10px 40px 10px 40px; background-color: #16738A; color: #fff; cursor: pointer;" @click="showModal = true" >
-                <b>Ajouter un utilisateur</b>
-                <font-awesome-icon :icon="['fas', 'plus-circle']" style="font-size: 20px; color: #fff;" aria-hidden="true" />
-            </a>
-        </div>
+      <h2>Gestion des utilisateurs</h2>
+
+      <div class="d-flex gap-3">
+        <a class="btn d-flex gap-2"
+          style="padding: 10px 40px; background-color: #16738A; color: #fff; cursor: pointer;"
+          @click="openAddModal">
+          <b>Ajouter un utilisateur</b>
+          <font-awesome-icon :icon="['fas', 'plus-circle']" style="font-size: 20px; color: #fff;" />
+        </a>
+      </div>
     </div>
 
-    <User_tables />
+    <!-- Tableau des utilisateurs -->
+    <User_tables @edit-user="openEditModal" ref="userTable" />
 
+    <!-- Modale d’ajout/modification -->
     <div v-if="showModal" class="modal-backdrop">
       <div class="modal-content">
-        <h3 class="mb-4 d-flex justify-content-center">Ajouter un utilisateur</h3>
-        <form @submit.prevent="addUser">
+        <h3 class="mb-4 d-flex justify-content-center">
+          {{ isEditing ? 'Modifier un utilisateur' : 'Ajouter un utilisateur' }}
+        </h3>
 
+        <form @submit.prevent="addUser">
           <div class="mb-4">
             <input type="text" v-model="newUser.name" placeholder="Nom" class="form-control" style="height: 50px;" required>
           </div>
@@ -51,51 +58,80 @@
           </div>
 
           <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-danger" @click="showModal = false" style="width: 250px; padding: 10px; font-weight: bold;">Annuler</button>
-            <button type="submit" class="btn btn-success" style="width: 250px; padding: 10px; font-weight: bold;">Enregistrer</button>
+            <button type="button" class="btn btn-danger" @click="showModal = false"
+              style="width: 250px; padding: 10px; font-weight: bold;">Annuler</button>
+            <button type="submit" class="btn btn-success"
+              style="width: 250px; padding: 10px; font-weight: bold;">
+              {{ isEditing ? 'Mettre à jour' : 'Enregistrer' }}
+            </button>
           </div>
-
         </form>
-
       </div>
-
     </div>
-    
+  </div>
 </template>
 
 <script>
-    import User_tables from './User_tables.vue';
-    import api from "../../api";
-    
-    export default {
-      components: {
-        User_tables,
-      },
-        data() {
-            return {
-            showModal: false,
-            newUser: {
-                name: '',
-                firstname: '',
-                email: '',
-                matricule: 0,
-                roles: '',
-                statut: true
-            }
-            };
-        },
-        methods: {
-            addUser() {
-            console.log("Nouvel utilisateur :", this.newUser);
-            const res = api.post("add_user", this.newUser);
+import User_tables from './User_tables.vue';
+import api from "../../api";
+import Swal from 'sweetalert2';
 
-            console.log(res);
+export default {
+  components: { User_tables },
 
-            this.showModal = false;
-            this.newUser = { name: '', firstname: '', email: '', matricule: 0, roles: '', statut: true };
-            }
+  data() {
+    return {
+      showModal: false,
+      isEditing: false,
+      newUser: {
+        id: null,
+        name: '',
+        firstname: '',
+        email: '',
+        matricule: 0,
+        roles: '',
+        statut: true
+      }
+    };
+  },
+
+  methods: {
+    openAddModal() {
+      this.isEditing = false;
+      this.newUser = { id: null, name: '', firstname: '', email: '', matricule: 0, roles: '', statut: true };
+      this.showModal = true;
+    },
+
+    openEditModal(user) {
+      this.isEditing = true;
+      this.newUser = { id: user.id, name: user.name, firstname: user.firstname, email: user.email, roles: user.roles[0], matricule: user.matricule, statut: user.statut };
+      this.showModal = true;
+    },
+
+    async addUser() {
+      try {
+        if (this.isEditing) {
+          const res = await api.put(`update_user/${this.newUser.id}`, this.newUser);
+          if (res.data.message === "Utilisateur mis à jour avec succès") {
+            Swal.fire('Modifié !', 'Utilisateur mis à jour avec succès.', 'success');
+          }
+        } else {
+          const res = await api.post("add_user", this.newUser);
+          if (res.data.message === "Utilisateur ajouté avec succès") {
+            Swal.fire('Ajouté !', 'Utilisateur ajouté avec succès.', 'success');
+          }
         }
+
+        this.$refs.userTable.fetchUsers();
+      } catch (err) {
+        console.log(err);
+      }
+
+      this.showModal = false;
+      this.newUser = { id: null, name: '', firstname: '', email: '', matricule: 0, roles: '', statut: true };
     }
+  }
+};
 </script>
 
 <style scoped>
@@ -105,7 +141,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

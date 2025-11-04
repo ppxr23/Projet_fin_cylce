@@ -10,8 +10,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import Toast from "vue-toastification";
-import "vue-toastification/dist/index.css";
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -26,9 +24,6 @@ app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(createPinia());
 app.use(router);
 
-
 app.use(VueSweetalert2);
-
-app.use(Toast, { position: "top-right", timeout: 3000 });
 
 app.mount('#app');

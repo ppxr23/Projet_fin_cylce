@@ -96,3 +96,7 @@
 .stars svg:last-child {
   margin-right: 0 !important;
 }
+
+button, a {
+    cursor: pointer;
+}

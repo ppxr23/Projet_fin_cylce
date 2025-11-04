@@ -37,8 +37,8 @@
            <font-awesome-icon :icon="['fas', 'user']" style="font-size: 20px; color: #6C757D;" aria-hidden="true" />
         </div>
         <div class="d-flex flex-column gap-1">
-          <h6 class="m-0">Jean Dupont</h6>
-          <p class="m-0">jean@company.com</p>
+          <h6 class="m-0">{{ connected.name }} {{ connected.firstname }}</h6>
+          <p class="m-0">{{ connected.username }}</p>
         </div>
       </div>
     </div>
@@ -66,19 +66,22 @@ export default {
   },
   data() {
     return {
-      menu_ele: 1
+      menu_ele: 1,
+      connected: {}
     }
   },
   mounted(){
     if (!sessionStorage.getItem("token")){
       this.$router.push('/')
     }
+    else {
+      this.connected = parseJwt(sessionStorage.getItem("token"));
+    }
   },
   methods: {
     async delogin() {
       try {
         const res = await api.post("/deconnexion");
-        console.log(res.data);
 
         sessionStorage.removeItem("token"); // efface token après logout
         this.$router.push('/'); // retour login

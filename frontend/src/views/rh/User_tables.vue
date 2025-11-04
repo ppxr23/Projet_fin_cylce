@@ -8,8 +8,8 @@
         <select class="form-select" v-model="filters.role" @change="applyFilters">
           <option value="">Rôles</option>
           <option value="Admin">Admin</option>
-          <option value="rh">RH</option>
-          <option value="employe">employé</option>
+          <option value="RH">RH</option>
+          <option value="COLLABORATEUR">Collaborateur</option>
         </select>
       </div>
       <div class="col-md-1">
@@ -24,12 +24,14 @@
     <!-- Tableau -->
     <div class="table-responsive">
       <table class="table table-striped">
-        <thead class="">
+        <thead>
           <tr>
             <th>ID</th>
             <th>Nom</th>
+            <th>Prénom</th>
             <th>Email</th>
             <th>Rôle</th>
+            <th>Matricule</th>
             <th>Statut</th>
             <th>Date de création</th>
             <th>Actions</th>
@@ -38,23 +40,25 @@
         <tbody>
           <tr v-for="(user, index) in filteredUsers" :key="index">
             <td>{{ user.id }}</td>
-            <td>{{ user.name }}  {{ user.firstname }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.firstname }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.roles[0] }}</td>
+            <td>{{ user.matricule }}</td>
             <td>
-              <span v-if="user.status" class="badge bg-success" style="width: 100px; padding: 10px;">Actif</span>
+              <span v-if="user.statut" class="badge bg-success" style="width: 100px; padding: 10px;">Actif</span>
               <span v-else class="badge bg-secondary" style="width: 100px; padding: 10px;">Inactif</span>
             </td>
             <td>{{ user.last_connexion }}</td>
             <td class="d-flex gap-3">
-              <a href="">
-                <font-awesome-icon :icon="['fas', 'fa-pencil']" style="font-size: 25px; color: #6C757D;" aria-hidden="true" />
+              <a @click.prevent="$emit('edit-user', user)">
+                <font-awesome-icon :icon="['fas', 'pencil']" style="font-size: 25px; color: #6C757D;" />
               </a>
-              <a href="">
-                <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: red;" aria-hidden="true" @click.prevent="deleteUser(user.id)" />
+              <a @click.prevent="deleteUser(user.id)">
+                <font-awesome-icon :icon="['fas', 'trash']" style="font-size: 25px; color: red;" />
               </a>
-              <a href="">
-                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: blue ;" aria-hidden="true" />
+              <a >
+                <font-awesome-icon :icon="['fas', 'eye']" style="font-size: 25px; color: blue;" />
               </a>
             </td>
           </tr>
@@ -66,7 +70,6 @@
 
 <script>
 import api from "../../api";
-import { useToast } from "vue-toastification";
 import Swal from 'sweetalert2';
 
 export default {
@@ -74,55 +77,29 @@ export default {
 
   data() {
     return {
-      filters: {
-        nom: '',
-        email: '',
-        role: '',
-        actif: ''
-      },
+      filters: { nom: '', email: '', role: '', actif: '' },
       users: []
     };
   },
 
   async mounted() {
-    const toast = useToast();
-
-    try {
-      const res = await api.get("list_users"); // pas besoin de POST
-      this.users = res.data; // stocke les utilisateurs récupérés
-      console.log("Utilisateurs :", this.users);
-    } 
-    catch (err) {
-      if (err.response.data) {
-        if (err.response.status === 401 && err.response.data.message === "Expired JWT Token") {
-          toast.error("Session expiré");
-          sessionStorage.removeItem("token");
-          this.$router.push('/');
-        }
-      } else {
-        toast.error("Erreur de connexion au serveur");
-      }
-    }
-  },
-
-  computed: {
-    filteredUsers() {
-      return this.users.filter(user => {
-        const matchNom = user.name?.toLowerCase().includes(this.filters.nom.toLowerCase());
-        const matchEmail = user.email?.toLowerCase().includes(this.filters.email.toLowerCase());
-        const matchRole = this.filters.role ? user.roles.includes(this.filters.role) : true;
-        const matchActif = this.filters.actif !== '' ? String(user.status) === this.filters.actif : true;
-        return matchNom && matchEmail && matchRole && matchActif;
-      });
-    }
+    this.fetchUsers();
   },
 
   methods: {
-    applyFilters() {
-
+    async fetchUsers() {
+      try {
+        const res = await api.get("list_users");
+        this.users = res.data;
+      } catch (err) {
+        console.log(err);
+      }
     },
+
+    applyFilters() {},
+
     async deleteUser(userId) {
-       const result = await Swal.fire({
+      const result = await Swal.fire({
         title: 'Êtes-vous sûr ?',
         text: "Vous ne pourrez pas revenir en arrière !",
         icon: 'warning',
@@ -141,6 +118,18 @@ export default {
           Swal.fire('Erreur', 'Impossible de supprimer l’utilisateur.', 'error');
         }
       }
+    }
+  },
+
+  computed: {
+    filteredUsers() {
+      return this.users.filter(user => {
+        const matchNom = user.name?.toLowerCase().includes(this.filters.nom.toLowerCase());
+        const matchEmail = user.email?.toLowerCase().includes(this.filters.email.toLowerCase());
+        const matchRole = this.filters.role ? user.roles.includes(this.filters.role) : true;
+        const matchActif = this.filters.actif !== '' ? String(user.status) === this.filters.actif : true;
+        return matchNom && matchEmail && matchRole && matchActif;
+      });
     }
   }
 };

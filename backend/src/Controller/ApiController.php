@@ -54,7 +54,8 @@ class ApiController extends AbstractController
                 'name' => $user->getName(),
                 'firstname' => $user->getFirstname(),
                 'roles' => $user->getRoles(),
-                'status' => $user->isActive(),
+                'matricule' => $user->getMatricule(),
+                'statut' => $user->isActive(),
                 'last_connexion' => $user->getLastConnexion()?->format('Y-m-d H:i:s'),
             ];
         }

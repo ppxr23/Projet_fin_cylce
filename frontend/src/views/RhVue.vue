@@ -43,8 +43,8 @@
            <font-awesome-icon :icon="['fas', 'user']" style="font-size: 20px; color: #6C757D;" aria-hidden="true" />
         </div>
         <div class="d-flex flex-column gap-1">
-          <h6 class="m-0">Marie Dubois</h6>
-          <p class="m-0">marie@company.com</p>
+          <h6 class="m-0">{{ connected.name }} {{ connected.firstname }}</h6>
+          <p class="m-0">{{ connected.username }}</p>
         </div>
       </div>
     </div>
@@ -65,12 +65,6 @@ import Rapport from './rh/Rapport.vue';
 import User_manage from './rh/User_manage.vue';
 import api from "../api";
 import { parseJwt } from "../utils/jwt";
-import { useToast } from "vue-toastification";
-
-if (sessionStorage.getItem("token")){
-  const connected = parseJwt(sessionStorage.getItem("token"));
-  console.log(connected)
-}
 
 export default {
   components: {
@@ -81,12 +75,16 @@ export default {
   },
   data() {
     return {
-      menu_ele: 1
+      menu_ele: 1,
+      connected: {} 
     }
   },
   mounted(){
     if (!sessionStorage.getItem("token")){
       this.$router.push('/')
+    }
+    else {
+      this.connected = parseJwt(sessionStorage.getItem("token"));
     }
   },
   methods: {
