@@ -12,24 +12,52 @@ import {
   Legend,
   PieController
 } from 'chart.js';
+import api from "../api";
 
 ChartJS.register(ArcElement, Tooltip, Legend, PieController);
 
 export default {
   name: 'ChartCircu',
-  mounted() {
-    this.renderChart();
+
+  data() {
+    return {
+      abs_month: 0,
+      retard_month: 0,
+      sanction_month: 0,
+      chart: null
+    };
   },
+
+  async mounted() {
+    try {
+      const [abs, sanction, retard] = await Promise.all([
+        api.get('count_absence_month'),
+        api.get('count_sanction_month'),
+        api.get('count_retard_month')
+      ]);
+
+      this.abs_month = abs.data;
+      this.sanction_month = sanction.data;
+      this.retard_month = retard.data;
+
+      this.renderChart();
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
   methods: {
     renderChart() {
       const ctx = this.$refs.pieChart.getContext('2d');
-      
-      new ChartJS(ctx, {
+
+      if (this.chart) this.chart.destroy();
+
+      this.chart = new ChartJS(ctx, {
         type: 'pie',
         data: {
           labels: ['Retard', 'Absence', 'Sanction'],
           datasets: [{
-            data: [30, 45, 25],
+            data: [this.retard_month, this.abs_month, this.sanction_month],
             backgroundColor: ['#ff6384', '#6C757D', '#ffce56'],
             borderColor: '#fff',
             borderWidth: 2,
@@ -49,11 +77,11 @@ export default {
             },
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label(context) {
                   const label = context.label || '';
                   const value = context.raw || 0;
                   const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = Math.round((value / total) * 100);
+                  const percentage = total ? Math.round((value / total) * 100) : 0;
                   return `${label}: ${value} (${percentage}%)`;
                 }
               }
@@ -63,10 +91,10 @@ export default {
       });
     }
   },
+
   beforeUnmount() {
-    // Nettoyage optionnel pour éviter les fuites mémoire
-    if (this.$refs.pieChart && this.$refs.pieChart.chart) {
-      this.$refs.pieChart.chart.destroy();
+    if (this.chart) {
+      this.chart.destroy();
     }
   }
 };

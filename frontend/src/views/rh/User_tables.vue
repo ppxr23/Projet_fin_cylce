@@ -98,7 +98,18 @@ export default {
   methods: {
     async fetchUsers() {
       try {
-        const res = await api.get("list_users");
+        if (!sessionStorage.getItem("token")){
+          this.$router.push('/')
+        }
+        else {
+          this.connected = parseJwt(sessionStorage.getItem("token"));
+        }
+
+        const res = await api.post("list_user_rh",{
+          matricule: this.connected.matricule,
+          roles: 'RH',
+          all: true
+        });
         this.users = res.data;
       } catch (err) {
         console.log(err);

@@ -6,6 +6,9 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Feedback;
 use App\Repository\UserRepository;
+use App\Repository\AbsenceRepository;
+use App\Repository\SanctionRepository;
+use App\Repository\RetardRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -83,7 +86,7 @@ class ApiController extends AbstractController
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password'] ?? 'vivetic');
         
         $user->setEmail($data['email'] ?? '');
-        $user->setRoles([$data['roles']] ?? '');
+        $user->setRoles($data['roles'] ?? '');
         $user->setName($data['name'] ?? '');
         $user->setFirstname($data['firstname'] ?? '');
         $user->setPassword($hashedPassword);
@@ -91,6 +94,7 @@ class ApiController extends AbstractController
         $user->setDateCreation($newDate ?? '');
         $user->setLastConnexion($newDate ?? '');
         $user->setMatricule($data['matricule'] ?? '');
+        $user->setVigie(0);
 
         $em->persist($user);
         $em->flush();
@@ -114,7 +118,7 @@ class ApiController extends AbstractController
         }
 
         if (isset($data['roles'])) {
-            $user->setRoles([$data['roles']]);
+            $user->setRoles($data['roles']);
         }
 
         if (isset($data['name'])) {
@@ -168,4 +172,64 @@ class ApiController extends AbstractController
         return $this->json(['message' => 'Feedback ajouté avec succès'], Response::HTTP_CREATED);
     }
 
+    #[Route('/api/list_user_rh', name: 'api_list_user_rh', methods: ['POST'])]
+    public function list_user_rh(UserRepository $userRepository, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $users = $userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all']);
+        
+        return $this->json($users);
+    }
+
+    #[Route('/api/count_user_rh', name: 'api_count_user_rh', methods: ['POST'])]
+    public function count_user_rh(UserRepository $userRepository, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $count_users = count($userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all']));
+        return $this->json($count_users);
+    }
+
+    #[Route('/api/count_absence_rh', name: 'api_count_absence_rh', methods: ['GET'])]
+    public function count_absence_rh(AbsenceRepository $absenceRepository): JsonResponse
+    {
+        $count_absences = count($absenceRepository->get_absence_today());
+        return $this->json($count_absences);
+    }
+
+    #[Route('/api/count_sanction_rh', name: 'api_count_sanction_rh', methods: ['GET'])]
+    public function count_sanction_rh(SanctionRepository $sanctionRepository): JsonResponse
+    {
+        $count_sanctions = count($sanctionRepository->get_sanction_today());
+        return $this->json($count_sanctions);
+    }
+
+    #[Route('/api/count_retard_rh', name: 'api_count_retard_rh', methods: ['GET'])]
+    public function count_retard_rh(RetardRepository $retardRepository): JsonResponse
+    {
+        $count_retards = count($retardRepository->get_retard_today());
+        return $this->json($count_retards);
+    }
+
+    #[Route('/api/count_retard_month', name: 'api_count_retard_month', methods: ['GET'])]
+    public function count_retard_month(RetardRepository $retardRepository): JsonResponse
+    {
+        $count_retards_month = count($retardRepository->get_retard_month());
+        return $this->json($count_retards_month);
+    }
+
+    #[Route('/api/count_sanction_month', name: 'api_count_sanction_month', methods: ['GET'])]
+    public function count_sanction_month(SanctionRepository $sanctionRepository): JsonResponse
+    {
+        $count_sanctions_month = count($sanctionRepository->get_sanction_month());
+        return $this->json($count_sanctions_month);
+    }
+
+    #[Route('/api/count_absence_month', name: 'api_count_absence_month', methods: ['GET'])]
+    public function count_absence_month(AbsenceRepository $absenceRepository): JsonResponse
+    {
+        $count_absence_month = count($absenceRepository->get_absence_month());
+        return $this->json($count_absence_month);
+    }
 }
