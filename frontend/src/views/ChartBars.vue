@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs'
+import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   BarElement,
@@ -14,52 +14,58 @@ import {
   Title,
   Tooltip,
   Legend
-} from 'chart.js'
+} from 'chart.js';
+import api from '../api';
 
-// Enregistrement des composants Chart.js
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend)
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 export default {
   name: 'BarChart',
   components: { Bar },
+
   data() {
     return {
       chartData: {
-        labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet'],
-        datasets: [
-          {
-            backgroundColor: '#0096C7',
-            data: [40, 20, 12, 39, 10, 5, 100],
-            label: 'Performance',
-          }
-        ]
+        labels: [],
+        datasets: []
       },
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: {
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            ticks: {
-              stepSize: 10
-            },
-            beginAtZero: true // Ajout recommandé
-          }
+          x: { grid: { display: false } },
+          y: { beginAtZero: true, ticks: { stepSize: 10 } }
         },
         plugins: {
-          legend: {
-            display: true,
-            position: 'top'
-          }
+          legend: { display: true, position: 'top' }
         }
       }
+    };
+  },
+
+  async mounted() {
+    try {
+      const vigie = await api.get('all_vigie');
+      const vigies = vigie.data;
+
+      const labels = vigies.map(v => v.name || 'N/A');
+
+      this.chartData = {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Performance',
+            backgroundColor: '#0096C7',
+            data: [40, 20, 12, 39, 100]
+          }
+        ]
+      };
+    } catch (err) {
+      console.error(err);
     }
   }
-}
+
+};
 </script>
 
 <style scoped>

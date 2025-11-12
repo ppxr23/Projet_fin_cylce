@@ -46,21 +46,21 @@
     <div class="d-flex mt-3" style="gap: 5%;">
         <div style="width: 45%; min-width: 400px;" class="mt-3 d-flex flex-column gap-5">
             <div class="chart-container">
-                <h3 class="mb-2"><center>Performance par équipe <font-awesome-icon :icon="['fas', 'line-chart']" style="font-size: 30px; color: #0096C7;" aria-hidden="true" /></center></h3>
+                <h3 class="mb-2 centered">Performance par équipe <font-awesome-icon :icon="['fas', 'line-chart']" style="font-size: 30px; color: #0096C7;" aria-hidden="true" /></h3>
                 <ChartBars />
             </div>
             <div class="chart-container">
-                <h3 class="mb-2"><center>Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></center></h3>
-                <center><ChartCircu style="width: 400px; height: 400px;"/></center>
+                <h3 class="mb-2 centered">Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></h3>
+                <ChartCircu style="width: 400px; height: 400px;" class="centered"/>
             </div>
         </div>
 
         <div class="mt-3 d-flex flex-column gap-3" style="width: 45%;">
             <div>
-                <h3 class="mb-2"><center>Alertes anomalie <font-awesome-icon :icon="['fas', 'exclamation-triangle']" style="font-size: 30px; color: red;" aria-hidden="true" /></center></h3>
+                <h3 class="mb-2 centered">Alertes anomalie <font-awesome-icon :icon="['fas', 'exclamation-triangle']" style="font-size: 30px; color: red;" aria-hidden="true" /></h3>
                 <div class="m-2 d-flex flex-column p-2" style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;">
                     <div class="d-flex gap-2 align-items-center w-100 m-0  anomalie" style="border-bottom: 2px solid #00000028;">
-                        <span class="danger"><center>Elevés</center></span>
+                        <span class="danger centered">Elevés</span>
                         <div>
                             <h5 class="m-0">Jean Dupont</h5>
                             <p class="m-0">Absences fréquente</p>
@@ -68,7 +68,7 @@
                     </div>
     
                     <div class="d-flex gap-2 align-items-center w-100 m-0 anomalie" style="border-bottom: 2px solid #00000028;">
-                        <span class="warning"><center>Moyennes</center></span>
+                        <span class="warning centered">Moyennes</span>
                         <div>
                             <h5 class="m-0">Jean Dupont</h5>
                             <p class="m-0">Absences fréquente</p>
@@ -78,10 +78,10 @@
             </div>
 
             <div>
-                <h3 class="mb-2"><center> Feedback <font-awesome-icon :icon="['fas', 'comment-dots']" style="font-size: 30px; color: #6f42c1;" aria-hidden="true" /></center></h3>
+                <h3 class="mb-2 centered"> Feedback <font-awesome-icon :icon="['fas', 'comment-dots']" style="font-size: 30px; color: #6f42c1;" aria-hidden="true" /></h3>
                 <div class="m-2 d-flex flex-column p-2" style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;">
                     <div class="d-flex gap-2 align-items-center w-100 m-0  anomalie" style="border-bottom: 2px solid #00000028;">
-                        <span class="feedback_name"><center>Jean Dupont</center></span>
+                        <span class="feedback_name centered">Jean Dupont</span>
                         <div>
                             <h5 class="m-0"><u>Note:</u> 5</h5>
                             <p class="m-0"><u>Commentaire:</u> Soit sérieux</p>
@@ -89,7 +89,7 @@
                     </div>
     
                     <div class="d-flex gap-2 align-items-center w-100 m-0 anomalie" style="border-bottom: 2px solid #00000028;">
-                        <span class="feedback_name"><center>Jean Dupont</center></span>
+                        <span class="feedback_name centered">Jean Dupont</span>
                         <div>
                             <h5 class="m-0"><u>Note:</u> 5</h5>
                             <p class="m-0"><u>Commentaire:</u> Soit sérieux</p>
@@ -115,7 +115,7 @@
                 user_actif: 0,
                 abs_rh: 0,
                 sanction_rh: 0,
-                retard_rh: 0
+                retard_rh: 0,
             };
         },
 
@@ -130,7 +130,7 @@
                 connected = parseJwt(sessionStorage.getItem('token'))
                 }
 
-                const [user, abs, sanction, retard] = await Promise.all([
+                const [user, abs, sanction, retard, vigie] = await Promise.all([
                     api.post('count_user_rh',{
                         matricule: connected.matricule,
                         roles: 'RH',

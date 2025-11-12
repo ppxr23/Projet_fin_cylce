@@ -45,8 +45,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $matricule = null;
 
-    #[ORM\Column]
-    private ?int $vigie = null;
+    #[ORM\ManyToOne(targetEntity: Vigie::class)]
+    #[ORM\JoinColumn(name: 'vigie', referencedColumnName: 'id')]
+    private ?Vigie $vigie = null;
 
     public function getId(): ?int
     {
@@ -174,7 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getVigie(): ?int
+    public function getVigie(): ?Vigie
     {
         return $this->vigie;
     }
@@ -182,11 +183,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVigie(int $vigie): static
     {
         $this->vigie = $vigie;
-
         return $this;
     }
 
-    // Méthodes requises par UserInterface
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -194,6 +193,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Nettoyage des données sensibles temporaires si nécessaire
+
     }
 }

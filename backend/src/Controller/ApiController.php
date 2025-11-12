@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use App\Repository\AbsenceRepository;
 use App\Repository\SanctionRepository;
 use App\Repository\RetardRepository;
+use App\Repository\VigieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -231,5 +232,12 @@ class ApiController extends AbstractController
     {
         $count_absence_month = count($absenceRepository->get_absence_month());
         return $this->json($count_absence_month);
+    }
+
+    #[Route('/api/all_vigie', name: 'api_all_vigie', methods: ['GET'])]
+    public function all_vigie(VigieRepository $vigieRepository): JsonResponse
+    {
+        $all_vigie = $vigieRepository->get_all_vigie();
+        return $this->json($all_vigie);
     }
 }

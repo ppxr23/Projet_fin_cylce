@@ -16,6 +16,13 @@ class VigieRepository extends ServiceEntityRepository
         parent::__construct($registry, Vigie::class);
     }
 
+    public function get_all_vigie(): array
+    {
+        return $this->getEntityManager()->createQuery(
+            'SELECT v FROM App\Entity\Vigie v WHERE v.statut = true'
+        )
+        ->getResult();
+    }
     //    /**
     //     * @return Vigie[] Returns an array of Vigie objects
     //     */

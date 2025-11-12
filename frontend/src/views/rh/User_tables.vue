@@ -26,12 +26,12 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Matricule</th>
             <th>Nom</th>
             <th>Prénom</th>
             <th>Email</th>
             <th>Rôle</th>
-            <th>Matricule</th>
+            <th>Vigie</th>
             <th>Statut</th>
             <th>Date de création</th>
             <th>Actions</th>
@@ -39,17 +39,17 @@
         </thead>
         <tbody>
           <tr v-for="(user, index) in filteredUsers.filter(u => u.email !== this.connected.username)" :key="index">
-            <td>{{ user.id }}</td>
+            <td>{{ user.matricule }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.firstname }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.roles[0] }}</td>
-            <td>{{ user.matricule }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.vigie['name'] }}</td>
             <td>
               <span v-if="user.statut" class="badge bg-success" style="width: 100px; padding: 10px;">Actif</span>
               <span v-else class="badge bg-secondary" style="width: 100px; padding: 10px;">Inactif</span>
             </td>
-            <td>{{ user.last_connexion }}</td>
+            <td>{{ formatDate(user.dateCreation) }}</td>
             <td class="d-flex gap-3">
               <a @click.prevent="$emit('edit-user', user)">
                 <font-awesome-icon :icon="['fas', 'pencil']" style="font-size: 25px; color: #6C757D;" />
@@ -96,6 +96,15 @@ export default {
   },
 
   methods: {
+    formatDate(dateStr) {
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+    },
+
     async fetchUsers() {
       try {
         if (!sessionStorage.getItem("token")){
