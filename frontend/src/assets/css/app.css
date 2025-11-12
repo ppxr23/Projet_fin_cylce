@@ -100,3 +100,10 @@
 button, a {
     cursor: pointer;
 }
+
+.centered {
+  text-align: center; /* pour centrer le texte ou les éléments inline */
+  display: flex;      /* pour centrer des éléments block */
+  justify-content: center;
+  align-items: center;
+}

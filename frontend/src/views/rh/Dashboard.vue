@@ -51,7 +51,9 @@
             </div>
             <div class="chart-container">
                 <h3 class="mb-2 centered">Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></h3>
-                <ChartCircu style="width: 400px; height: 400px;" class="centered"/>
+                <div class="centered">
+                    <ChartCircu style="width: 400px; height: 400px;"/>
+                </div>
             </div>
         </div>
 
