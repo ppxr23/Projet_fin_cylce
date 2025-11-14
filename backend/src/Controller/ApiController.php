@@ -10,6 +10,7 @@ use App\Repository\AbsenceRepository;
 use App\Repository\SanctionRepository;
 use App\Repository\RetardRepository;
 use App\Repository\VigieRepository;
+use App\Repository\NoteRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -239,5 +240,12 @@ class ApiController extends AbstractController
     {
         $all_vigie = $vigieRepository->get_all_vigie();
         return $this->json($all_vigie);
+    }
+
+    #[Route('/api/all_note', name: 'api_all_note', methods: ['GET'])]
+    public function all_note(NoteRepository $noteRepository): JsonResponse
+    {
+        $all_note = $noteRepository->get_all_notes();
+        return $this->json($all_note);
     }
 }

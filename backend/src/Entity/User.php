@@ -42,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $statut = null;
 
-    #[ORM\Column]
+    #[ORM\Column(unique: true)]
     private ?int $matricule = null;
 
     #[ORM\ManyToOne(targetEntity: Vigie::class)]
