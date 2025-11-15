@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Note;
+use App\Entity\Vigie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +16,21 @@ class NoteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Note::class);
     }
+
+    public function getVigieByMatricule(string $matricule): ?int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT vigie FROM users WHERE matricule = :matricule";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('matricule', $matricule);
+
+        $vigieId = $stmt->executeQuery()->fetchOne();
+
+        return $vigieId ? (int)$vigieId : null;
+    }
+
 
     public function get_all_notes(): array 
     {
@@ -42,6 +58,33 @@ class NoteRepository extends ServiceEntityRepository
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
+    public function get_all_notes_team($matricule = null, $roles = null, $all = false): array 
+    {
+        $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
+        
+        $cnx = $this->getEntityManager()->getConnection();
+        
+        $start = new \DateTime('first day of this month 00:00:00');
+        $end   = new \DateTime('last day of this month 23:59:59');
+
+        $sql = "
+            SELECT 
+                users.firstname,
+                ROUND(AVG(note.note)::numeric, 2) AS moyenne
+            FROM note
+            INNER JOIN users ON note.matricule = users.matricule
+            WHERE note.date BETWEEN :start AND :end AND users.vigie = :vigie
+            GROUP BY users.firstname
+            ORDER BY users.firstname
+        ";
+
+        $stmt = $cnx->prepare($sql);
+        $stmt->bindValue('start', $start->format('Y-m-d H:i:s'));
+        $stmt->bindValue('end',   $end->format('Y-m-d H:i:s'));
+        $stmt->bindValue('vigie',   $vigie);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
 
     //    /**
     //     * @return Note[] Returns an array of Note objects

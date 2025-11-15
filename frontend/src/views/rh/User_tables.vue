@@ -44,7 +44,7 @@
             <td>{{ user.firstname }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
-            <td>{{ user.vigie['name'] }}</td>
+            <td>{{ user.vigie?.name }}</td>
             <td>
               <span v-if="user.statut" class="badge bg-success" style="width: 100px; padding: 10px;">Actif</span>
               <span v-else class="badge bg-secondary" style="width: 100px; padding: 10px;">Inactif</span>

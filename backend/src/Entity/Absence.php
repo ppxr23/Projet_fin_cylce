@@ -29,6 +29,10 @@ class Absence
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $date = null;
 
+    #[ORM\ManyToOne(targetEntity: Vigie::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Vigie $vigie = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -98,6 +102,17 @@ class Absence
     {
         $this->date = $date;
 
+        return $this;
+    }
+
+    public function getVigie(): ?Vigie
+    {
+        return $this->vigie;
+    }
+
+    public function setVigie(?Vigie $vigie): self
+    {
+        $this->vigie = $vigie;
         return $this;
     }
 }

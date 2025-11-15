@@ -193,45 +193,57 @@ class ApiController extends AbstractController
         return $this->json($count_users);
     }
 
-    #[Route('/api/count_absence_rh', name: 'api_count_absence_rh', methods: ['GET'])]
-    public function count_absence_rh(AbsenceRepository $absenceRepository): JsonResponse
+    #[Route('/api/count_absence_rh', name: 'api_count_absence_rh', methods: ['POST'])]
+    public function count_absence_rh(AbsenceRepository $absenceRepository, Request $request): JsonResponse
     {
-        $count_absences = count($absenceRepository->get_absence_today());
+        $data = json_decode($request->getContent(), true);
+
+        $count_absences = count($absenceRepository->get_absence_today($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_absences);
     }
 
-    #[Route('/api/count_sanction_rh', name: 'api_count_sanction_rh', methods: ['GET'])]
-    public function count_sanction_rh(SanctionRepository $sanctionRepository): JsonResponse
+    #[Route('/api/count_sanction_rh', name: 'api_count_sanction_rh', methods: ['POST'])]
+    public function count_sanction_rh(SanctionRepository $sanctionRepository, Request $request): JsonResponse
     {
-        $count_sanctions = count($sanctionRepository->get_sanction_today());
+        $data = json_decode($request->getContent(), true);
+
+        $count_sanctions = count($sanctionRepository->get_sanction_today($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_sanctions);
     }
 
-    #[Route('/api/count_retard_rh', name: 'api_count_retard_rh', methods: ['GET'])]
-    public function count_retard_rh(RetardRepository $retardRepository): JsonResponse
+    #[Route('/api/count_retard_rh', name: 'api_count_retard_rh', methods: ['POST'])]
+    public function count_retard_rh(RetardRepository $retardRepository, Request $request): JsonResponse
     {
-        $count_retards = count($retardRepository->get_retard_today());
+        $data = json_decode($request->getContent(), true);
+
+        $count_retards = count($retardRepository->get_retard_today($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_retards);
     }
 
-    #[Route('/api/count_retard_month', name: 'api_count_retard_month', methods: ['GET'])]
-    public function count_retard_month(RetardRepository $retardRepository): JsonResponse
+    #[Route('/api/count_retard_month', name: 'api_count_retard_month', methods: ['POST'])]
+    public function count_retard_month(RetardRepository $retardRepository, Request $request): JsonResponse
     {
-        $count_retards_month = count($retardRepository->get_retard_month());
+        $data = json_decode($request->getContent(), true);
+
+        $count_retards_month = count($retardRepository->get_retard_month($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_retards_month);
     }
 
-    #[Route('/api/count_sanction_month', name: 'api_count_sanction_month', methods: ['GET'])]
-    public function count_sanction_month(SanctionRepository $sanctionRepository): JsonResponse
+    #[Route('/api/count_sanction_month', name: 'api_count_sanction_month', methods: ['POST'])]
+    public function count_sanction_month(SanctionRepository $sanctionRepository, Request $request): JsonResponse
     {
-        $count_sanctions_month = count($sanctionRepository->get_sanction_month());
+        $data = json_decode($request->getContent(), true);
+
+        $count_sanctions_month = count($sanctionRepository->get_sanction_month($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_sanctions_month);
     }
 
-    #[Route('/api/count_absence_month', name: 'api_count_absence_month', methods: ['GET'])]
-    public function count_absence_month(AbsenceRepository $absenceRepository): JsonResponse
+    #[Route('/api/count_absence_month', name: 'api_count_absence_month', methods: ['POST'])]
+    public function count_absence_month(AbsenceRepository $absenceRepository, Request $request): JsonResponse
     {
-        $count_absence_month = count($absenceRepository->get_absence_month());
+        $data = json_decode($request->getContent(), true);
+
+        $count_absence_month = count($absenceRepository->get_absence_month($data['matricule'], $data['roles'], $data['all']));
         return $this->json($count_absence_month);
     }
 
@@ -247,5 +259,14 @@ class ApiController extends AbstractController
     {
         $all_note = $noteRepository->get_all_notes();
         return $this->json($all_note);
+    }
+
+    #[Route('/api/all_note_team', name: 'api_all_note_team', methods: ['POST'])]
+    public function all_note_team(NoteRepository $noteRepository, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $all_notes = $noteRepository->get_all_notes_team($data['matricule'], $data['roles'], $data['all']);
+        return $this->json($all_notes);
     }
 }

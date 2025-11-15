@@ -29,6 +29,10 @@ class Note
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTime $time = null;
 
+    #[ORM\ManyToOne(targetEntity: Vigie::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Vigie $vigie = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +90,17 @@ class Note
     {
         $this->time = $time;
 
+        return $this;
+    }
+
+    public function getVigie(): ?Vigie
+    {
+        return $this->vigie;
+    }
+
+    public function setVigie(?Vigie $vigie): self
+    {
+        $this->vigie = $vigie;
         return $this;
     }
 }

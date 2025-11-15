@@ -12,7 +12,8 @@ import {
   Legend,
   PieController
 } from 'chart.js';
-import api from "../api";
+import api from "../../api";
+import { parseJwt } from '../../utils/jwt';
 
 ChartJS.register(ArcElement, Tooltip, Legend, PieController);
 
@@ -30,10 +31,32 @@ export default {
 
   async mounted() {
     try {
+
+      let connected = null
+
+      if (!sessionStorage.getItem('token')) {
+        this.$router.push('/')
+        return
+      } else {
+        connected = parseJwt(sessionStorage.getItem('token'))
+      }
+
       const [abs, sanction, retard] = await Promise.all([
-        api.get('count_absence_month'),
-        api.get('count_sanction_month'),
-        api.get('count_retard_month')
+        api.post('count_absence_month',{
+            matricule: connected.matricule,
+            roles: 'RH',
+            all: false
+        }),
+        api.post('count_sanction_month',{
+            matricule: connected.matricule,
+            roles: 'RH',
+            all: false
+        }),
+        api.post('count_retard_month',{
+            matricule: connected.matricule,
+            roles: 'RH',
+            all: false
+        })
       ]);
 
       this.abs_month = abs.data;

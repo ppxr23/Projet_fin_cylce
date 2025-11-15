@@ -15,7 +15,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import api from '../api';
+import api from '../../api';
+import { parseJwt } from '../../utils/jwt';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
@@ -45,10 +46,24 @@ export default {
 
   async mounted() {
     try {
-      const vigie = await api.get('all_vigie');
-      const vigies = vigie.data;
+      let connected = null
 
-      const labels = vigies.map(v => v.name || 'N/A');
+      if (!sessionStorage.getItem('token')) {
+        this.$router.push('/')
+        return
+      } else {
+        connected = parseJwt(sessionStorage.getItem('token'))
+      }
+
+      const note = await api.post('all_note_team',{
+            matricule: connected.matricule,
+            roles: 'MANAGER',
+            all: false
+        });
+      const notes = note.data;
+
+      const labels = notes.map(v => v.firstname || 'N/A');
+      const datas = notes.map(v => v.moyenne || 'N/A');
 
       this.chartData = {
         labels: labels,
@@ -56,7 +71,7 @@ export default {
           {
             label: 'Performance',
             backgroundColor: '#0096C7',
-            data: [40, 20, 12, 39, 100]
+            data: datas
           }
         ]
       };

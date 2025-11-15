@@ -102,8 +102,8 @@
 </template>
 
 <script>
-    import ChartBars from '../ChartBars.vue'
-    import ChartCircu from '../ChartCircu.vue';
+    import ChartBars from '../rh/ChartBars.vue'
+    import ChartCircu from '../rh/ChartCircu.vue';
 
     export default {
         components: { ChartBars, ChartCircu }

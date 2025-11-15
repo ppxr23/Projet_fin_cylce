@@ -104,8 +104,8 @@
 </template>
 
 <script>
-    import ChartBars from '../ChartBars.vue'
-    import ChartCircu from '../ChartCircu.vue';
+    import ChartBars from './ChartBars.vue'
+    import ChartCircu from './ChartCircu.vue';
     import api from "../../api";
     import { parseJwt } from '../../utils/jwt';
 
@@ -138,9 +138,21 @@
                         roles: 'RH',
                         all: false
                     }),
-                    api.get('count_absence_rh'),
-                    api.get('count_sanction_rh'),
-                    api.get('count_retard_rh')
+                    api.post('count_absence_rh',{
+                        matricule: connected.matricule,
+                        roles: 'RH',
+                        all: false
+                    }),
+                    api.post('count_sanction_rh',{
+                        matricule: connected.matricule,
+                        roles: 'RH',
+                        all: false
+                    }),
+                    api.post('count_retard_rh',{
+                        matricule: connected.matricule,
+                        roles: 'RH',
+                        all: false
+                    })
                 ]);
 
                 this.user_actif = user.data

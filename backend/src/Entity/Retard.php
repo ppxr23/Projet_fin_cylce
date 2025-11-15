@@ -23,6 +23,10 @@ class Retard
     #[ORM\Column]
     private ?float $retard_in_hour = null;
 
+    #[ORM\ManyToOne(targetEntity: Vigie::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Vigie $vigie = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +72,17 @@ class Retard
     {
         $this->retard_in_hour = $retard_in_hour;
 
+        return $this;
+    }
+
+    public function getVigie(): ?Vigie
+    {
+        return $this->vigie;
+    }
+
+    public function setVigie(?Vigie $vigie): self
+    {
+        $this->vigie = $vigie;
         return $this;
     }
 }

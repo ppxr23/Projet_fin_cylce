@@ -18,13 +18,17 @@ class Sanction
     private ?int $matricule = null;
 
     #[ORM\Column]
-    private ?int $type_santion = null;
+    private ?int $type_sanction = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $date_insert = null;
 
     #[ORM\Column]
     private ?int $matricule_insert = null;
+
+    #[ORM\ManyToOne(targetEntity: Vigie::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Vigie $vigie = null;
 
     public function getId(): ?int
     {
@@ -52,12 +56,12 @@ class Sanction
 
     public function getTypeSantion(): ?int
     {
-        return $this->type_santion;
+        return $this->type_sanction;
     }
 
-    public function setTypeSantion(int $type_santion): static
+    public function setTypeSantion(int $type_sanction): static
     {
-        $this->type_santion = $type_santion;
+        $this->type_sanction = $type_sanction;
 
         return $this;
     }
@@ -83,6 +87,17 @@ class Sanction
     {
         $this->matricule_insert = $matricule_insert;
 
+        return $this;
+    }
+
+    public function getVigie(): ?Vigie
+    {
+        return $this->vigie;
+    }
+
+    public function setVigie(?Vigie $vigie): self
+    {
+        $this->vigie = $vigie;
         return $this;
     }
 }
