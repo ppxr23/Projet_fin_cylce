@@ -22,7 +22,7 @@ jobs:
   backend-tests:
     name: Backend - Tests & Quality
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -50,34 +50,29 @@ jobs:
           coverage: xdebug
           tools: composer:v2
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-        working-directory: ./backend
-
       - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ${{ github.workspace }}/backend/vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-scripts
         working-directory: ./backend
+        run: composer install --prefer-dist --no-progress --no-scripts
 
       - name: Run Symfony setup scripts
+        working-directory: ./backend
         run: |
           php bin/console cache:clear --no-warmup || true
           php bin/console importmap:install || true
-        working-directory: ./backend
-              
+
       - name: Create JWT keys
+        working-directory: ./backend
         run: |
           mkdir -p config/jwt
           openssl genpkey -algorithm RSA -out config/jwt/private.pem -pkeyopt rsa_keygen_bits:4096
           openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
-        working-directory: ./backend
 
       - name: Create .env file
         working-directory: ./backend
@@ -99,10 +94,7 @@ jobs:
         working-directory: ./backend
         env:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
-        run: |
-          composer install --prefer-dist --no-progress --no-scripts
-          php vendor/bin/phpunit --coverage-clover coverage.xml
-
+        run: php vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Run PHPStan (Static Analysis)
         working-directory: ./backend
@@ -120,6 +112,7 @@ jobs:
           file: ./backend/coverage.xml
           flags: backend
           name: backend-coverage
+
 
   # ========================================
   # JOB 2: Tests Frontend (Vue.js)
