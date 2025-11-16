@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Bar :data="chartData" :options="chartOptions" />
+    <Bar
+      :data="chartData"
+      :options="chartOptions"
+    />
   </div>
 </template>
 
@@ -21,7 +24,7 @@ import { parseJwt } from '../../utils/jwt';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 export default {
-  name: 'BarChart',
+  name: 'BarChartManager',
   components: { Bar },
 
   data() {

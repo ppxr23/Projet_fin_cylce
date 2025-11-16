@@ -2,9 +2,19 @@
   <h2>Feedback - Évaluation du collaborateur</h2>
 
   <div class="mt-4 d-flex gap-3 col-md-5 align-items-center">
-    <h5 style="width: 190px;">Collaborateur :</h5>
-    <select class="form-select md-1" v-model="selectedCollaborateur">
-      <option disabled value="">-- Sélectionner un collaborateur --</option>
+    <h5 style="width: 190px;">
+      Collaborateur :
+    </h5>
+    <select
+      v-model="selectedCollaborateur"
+      class="form-select md-1"
+    >
+      <option
+        disabled
+        value=""
+      >
+        -- Sélectionner un collaborateur --
+      </option>
       <option 
         v-for="user in sous_vigie" 
         :key="user.matricule" 
@@ -15,25 +25,41 @@
     </select>
   </div>
 
-  <h4 class="mt-5">Critères d'évaluation :</h4>
+  <h4 class="mt-5">
+    Critères d'évaluation :
+  </h4>
 
-  <div v-for="(critere, index) in criteres" :key="index">
-    <h5 class="me-2"><span style="color: #16738A;">❖</span> &nbsp; {{ critere.nom }}</h5>
+  <div
+    v-for="(critere, index) in criteres"
+    :key="index"
+  >
+    <h5 class="me-2">
+      <span style="color: #16738A;">❖</span> &nbsp; {{ critere.nom }}
+    </h5>
     <div class="d-flex gap-3 align-items-center mb-1">
       <input 
+        v-model="critere.note" 
         type="range" 
         min="0" 
-        max="10" 
-        v-model="critere.note"
+        max="10"
         class="col-md-4"
       >
-      <p class="mb-0 ms-3">Note : {{ critere.note }}</p>
+      <p class="mb-0 ms-3">
+        Note : {{ critere.note }}
+      </p>
     </div>
   </div>
 
-  <h4 class="mt-5">Commentaires :</h4>
+  <h4 class="mt-5">
+    Commentaires :
+  </h4>
   <div class="col-md-5 d-flex flex-column gap-4 mt-3">
-    <input type="text" v-model="commentaire" class="form-control" style="height: 100px;">
+    <input
+      v-model="commentaire"
+      type="text"
+      class="form-control"
+      style="height: 100px;"
+    >
     <div class="d-flex w-100 justify-content-between">
       <button 
         type="button" 
@@ -62,6 +88,7 @@ import api from '../../api'
 import { parseJwt } from '../../utils/jwt'
 
 export default {
+  name: "FeedbackRh",
   data() {
     return {
       sous_vigie: [],

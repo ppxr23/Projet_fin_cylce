@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <canvas ref="pieChart"></canvas>
+    <canvas ref="pieChart" />
   </div>
 </template>
 
@@ -17,7 +17,7 @@ import api from "../../api";
 ChartJS.register(ArcElement, Tooltip, Legend, PieController);
 
 export default {
-  name: 'ChartCircu',
+  name: 'ChartCircuCollab',
 
   data() {
     return {
@@ -43,6 +43,12 @@ export default {
       this.renderChart();
     } catch (error) {
       console.error(error);
+    }
+  },
+
+  beforeUnmount() {
+    if (this.chart) {
+      this.chart.destroy();
     }
   },
 
@@ -89,12 +95,6 @@ export default {
           }
         }
       });
-    }
-  },
-
-  beforeUnmount() {
-    if (this.chart) {
-      this.chart.destroy();
     }
   }
 };

@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <canvas ref="pieChart"></canvas>
+    <canvas ref="pieChart" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import { parseJwt } from '../../utils/jwt';
 ChartJS.register(ArcElement, Tooltip, Legend, PieController);
 
 export default {
-  name: 'ChartCircu',
+  name: 'ChartCircuManager',
 
   data() {
     return {
@@ -69,6 +69,12 @@ export default {
     }
   },
 
+  beforeUnmount() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  },
+
   methods: {
     renderChart() {
       const ctx = this.$refs.pieChart.getContext('2d');
@@ -112,12 +118,6 @@ export default {
           }
         }
       });
-    }
-  },
-
-  beforeUnmount() {
-    if (this.chart) {
-      this.chart.destroy();
     }
   }
 };

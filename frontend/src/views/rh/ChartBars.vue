@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Bar :data="chartData" :options="chartOptions" />
+    <Bar
+      :data="chartData"
+      :options="chartOptions"
+    />
   </div>
 </template>
 
@@ -20,7 +23,7 @@ import api from '../../api';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 export default {
-  name: 'BarChart',
+  name: 'BarChartRh',
   components: { Bar },
 
   data() {

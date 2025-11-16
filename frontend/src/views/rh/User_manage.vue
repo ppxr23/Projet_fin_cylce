@@ -4,20 +4,31 @@
       <h2>Gestion des utilisateurs</h2>
 
       <div class="d-flex gap-3">
-        <a class="btn d-flex gap-2"
+        <a
+          class="btn d-flex gap-2"
           style="padding: 10px 40px; background-color: #16738A; color: #fff; cursor: pointer;"
-          @click="openAddModal">
+          @click="openAddModal"
+        >
           <b>Ajouter un utilisateur</b>
-          <font-awesome-icon :icon="['fas', 'plus-circle']" style="font-size: 20px; color: #fff;" />
+          <font-awesome-icon
+            :icon="['fas', 'plus-circle']"
+            style="font-size: 20px; color: #fff;"
+          />
         </a>
       </div>
     </div>
 
     <!-- Tableau des utilisateurs -->
-    <User_tables @edit-user="openEditModal" ref="userTable" />
+    <User_tables
+      ref="userTable"
+      @edit-user="openEditModal"
+    />
 
     <!-- Modale d’ajout/modification -->
-    <div v-if="showModal" class="modal-backdrop">
+    <div
+      v-if="showModal"
+      class="modal-backdrop"
+    >
       <div class="modal-content">
         <h3 class="mb-4 d-flex justify-content-center">
           {{ isEditing ? 'Modifier un utilisateur' : 'Ajouter un utilisateur' }}
@@ -25,43 +36,104 @@
 
         <form @submit.prevent="addUser">
           <div class="mb-4">
-            <input type="text" v-model="newUser.name" placeholder="Nom" class="form-control" style="height: 50px;" required>
+            <input
+              v-model="newUser.name"
+              type="text"
+              placeholder="Nom"
+              class="form-control"
+              style="height: 50px;"
+              required
+            >
           </div>
 
           <div class="mb-4">
-            <input type="text" v-model="newUser.firstname" placeholder="Prénom" class="form-control" style="height: 50px;" required>
+            <input
+              v-model="newUser.firstname"
+              type="text"
+              placeholder="Prénom"
+              class="form-control"
+              style="height: 50px;"
+              required
+            >
           </div>
 
           <div class="mb-4">
-            <input type="email" v-model="newUser.email" placeholder="Email" class="form-control" style="height: 50px;" required>
+            <input
+              v-model="newUser.email"
+              type="email"
+              placeholder="Email"
+              class="form-control"
+              style="height: 50px;"
+              required
+            >
           </div>
 
           <div class="mb-4">
-            <input type="number" v-model="newUser.matricule" placeholder="Matricule" class="form-control" style="height: 50px;" required>
+            <input
+              v-model="newUser.matricule"
+              type="number"
+              placeholder="Matricule"
+              class="form-control"
+              style="height: 50px;"
+              required
+            >
           </div>
 
           <div class="mb-4">
-            <select v-model="newUser.roles" class="form-select" style="height: 50px;" required>
-              <option value="">Sélectionner un rôle</option>
-              <option value="MANAGER">Manager</option>
-              <option value="RH">RH</option>
-              <option value="COLLABORATEUR">Collaborateur</option>
+            <select
+              v-model="newUser.roles"
+              class="form-select"
+              style="height: 50px;"
+              required
+            >
+              <option value="">
+                Sélectionner un rôle
+              </option>
+              <option value="MANAGER">
+                Manager
+              </option>
+              <option value="RH">
+                RH
+              </option>
+              <option value="COLLABORATEUR">
+                Collaborateur
+              </option>
             </select>
           </div>
 
           <div class="mb-4">
-            <select v-model="newUser.statut" class="form-select" style="height: 50px;" required>
-              <option value="">Sélectionner le statut</option>
-              <option :value="true">Actif</option>
-              <option :value="false">Inactif</option>
+            <select
+              v-model="newUser.statut"
+              class="form-select"
+              style="height: 50px;"
+              required
+            >
+              <option value="">
+                Sélectionner le statut
+              </option>
+              <option :value="true">
+                Actif
+              </option>
+              <option :value="false">
+                Inactif
+              </option>
             </select>
           </div>
 
           <div class="d-flex justify-content-between">
-            <button type="button" class="btn btn-danger" @click="showModal = false"
-              style="width: 250px; padding: 10px; font-weight: bold;">Annuler</button>
-            <button type="submit" class="btn btn-success"
-              style="width: 250px; padding: 10px; font-weight: bold;">
+            <button
+              type="button"
+              class="btn btn-danger"
+              style="width: 250px; padding: 10px; font-weight: bold;"
+              @click="showModal = false"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-success"
+              style="width: 250px; padding: 10px; font-weight: bold;"
+            >
               {{ isEditing ? 'Mettre à jour' : 'Enregistrer' }}
             </button>
           </div>
@@ -77,6 +149,7 @@ import api from "../../api";
 import Swal from 'sweetalert2';
 
 export default {
+  name: "UserManage",
   components: { User_tables },
 
   data() {

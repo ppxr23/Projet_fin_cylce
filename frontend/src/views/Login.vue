@@ -2,28 +2,36 @@
   <nav id="app-login">
     <nav id="nav-login">
       <div class="container p-5">
-        <h3 class="mb-4" style="text-align: center;">CONNEXION</h3>
+        <h3
+          class="mb-4"
+          style="text-align: center;"
+        >
+          CONNEXION
+        </h3>
 
         <form @submit.prevent="login">
           <div class="mb-4">
             <input
+              id="email"
               v-model="email"
               type="email"
               class="form-control"
-              id="email"
               placeholder="Adresse e-mail"
-            />
+            >
           </div>
 
           <div class="mb-2 input-group password-group">
             <input
+              id="mdp"
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               class="form-control"
-              id="mdp"
               placeholder="Mot de passe"
-            />
-            <span class="input-group-text eye-icon" @click="togglePassword">
+            >
+            <span
+              class="input-group-text eye-icon"
+              @click="togglePassword"
+            >
               <font-awesome-icon
                 :icon="showPassword ? ['fas', 'eye-slash'] : ['fas', 'eye']"
                 class="animate-eye"
@@ -33,15 +41,27 @@
           </div>
 
           <div class="mb-4 d-flex justify-content-end">
-            <a href="" id="forget">Mot de passe oublié?</a>
+            <a
+              id="forget"
+              href=""
+            >Mot de passe oublié?</a>
           </div>
 
-          <button type="submit" class="btn btn-primary" id="login">
+          <button
+            id="login"
+            type="submit"
+            class="btn btn-primary"
+          >
             Se connecter
           </button>
         </form>
 
-        <p v-if="error" class="text-danger mt-3">{{ error }}</p>
+        <p
+          v-if="error"
+          class="text-danger mt-3"
+        >
+          {{ error }}
+        </p>
       </div>
     </nav>
   </nav>
@@ -52,6 +72,7 @@ import api from "../api";
 import { parseJwt } from "../utils/jwt";
 
 export default {
+  name: "LoginPage",
   data() {
     return {
       email: "",
