@@ -100,8 +100,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
         run: |
-          chmod +x bin/phpunit
-          php ./bin/phpunit --coverage-clover coverage.xml
+          composer install --prefer-dist --no-progress --no-scripts
+          php vendor/bin/phpunit --coverage-clover coverage.xml
 
 
       - name: Run PHPStan (Static Analysis)
