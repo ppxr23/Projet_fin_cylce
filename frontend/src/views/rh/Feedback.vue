@@ -92,7 +92,8 @@ export default {
         matricule: connecte.matricule,
         roles: 'RH',
         all: false
-      })
+      });
+
       this.sous_vigie = res.data
     } catch (error) {
       console.error(error)

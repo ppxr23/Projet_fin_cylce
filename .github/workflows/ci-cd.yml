@@ -241,86 +241,86 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ========================================
-  # JOB 5: Deploy to Staging
-  # ========================================
-  deploy-staging:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: build-images
-    if: github.ref == 'refs/heads/develop'
-    environment:
-      name: staging
-      url: https://staging.vivetic-rh.com
+  # # ========================================
+  # # JOB 5: Deploy to Staging
+  # # ========================================
+  # deploy-staging:
+  #   name: Deploy to Staging
+  #   runs-on: ubuntu-latest
+  #   needs: build-images
+  #   if: github.ref == 'refs/heads/develop'
+  #   environment:
+  #     name: staging
+  #     url: https://staging.vivetic-rh.com
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Deploy to staging server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_KEY }}
-          script: |
-            cd /opt/vivetic-rh
-            docker-compose pull
-            docker-compose up -d
-            docker-compose exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
-            docker-compose exec -T backend php bin/console cache:clear
+  #     - name: Deploy to staging server
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.STAGING_HOST }}
+  #         username: ${{ secrets.STAGING_USER }}
+  #         key: ${{ secrets.STAGING_SSH_KEY }}
+  #         script: |
+  #           cd /opt/vivetic-rh
+  #           docker-compose pull
+  #           docker-compose up -d
+  #           docker-compose exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
+  #           docker-compose exec -T backend php bin/console cache:clear
 
-  # ========================================
-  # JOB 6: Deploy to Production
-  # ========================================
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: build-images
-    if: github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: https://vivetic-rh.com
+  # # ========================================
+  # # JOB 6: Deploy to Production
+  # # ========================================
+  # deploy-production:
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   needs: build-images
+  #   if: github.ref == 'refs/heads/main'
+  #   environment:
+  #     name: production
+  #     url: https://vivetic-rh.com
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Create deployment
-        uses: chrnorm/deployment-action@v2
-        id: deployment
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          environment: production
+  #     - name: Create deployment
+  #       uses: chrnorm/deployment-action@v2
+  #       id: deployment
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         environment: production
 
-      - name: Deploy to production server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            cd /opt/vivetic-rh
-            docker-compose pull
-            docker-compose up -d
-            docker-compose exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
-            docker-compose exec -T backend php bin/console cache:clear --env=prod
+  #     - name: Deploy to production server
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.PROD_HOST }}
+  #         username: ${{ secrets.PROD_USER }}
+  #         key: ${{ secrets.PROD_SSH_KEY }}
+  #         script: |
+  #           cd /opt/vivetic-rh
+  #           docker-compose pull
+  #           docker-compose up -d
+  #           docker-compose exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
+  #           docker-compose exec -T backend php bin/console cache:clear --env=prod
 
-      - name: Update deployment status (success)
-        if: success()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-          state: success
+  #     - name: Update deployment status (success)
+  #       if: success()
+  #       uses: chrnorm/deployment-status@v2
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+  #         state: success
 
-      - name: Update deployment status (failure)
-        if: failure()
-        uses: chrnorm/deployment-status@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
-          state: failure
+  #     - name: Update deployment status (failure)
+  #       if: failure()
+  #       uses: chrnorm/deployment-status@v2
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          # state: failure
 
   # ========================================
   # JOB 7: Notification

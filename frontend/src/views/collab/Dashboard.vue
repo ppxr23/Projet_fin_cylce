@@ -1,5 +1,5 @@
 <template>
-    <h2>Tableau de bord Collaborateur</h2>
+    <h2>Tableau de bord Manager</h2>
 
     <div class="d-flex gap-3">
         <div class="p-3 m-2 d-flex gap-3 element-dash" style="border: 2px solid #00000028; border-radius: 10px; width: 25%;" >
@@ -7,7 +7,7 @@
                 <font-awesome-icon :icon="['fas', 'user']" style="font-size: 40px; color: #16738A" aria-hidden="true" />
             </div>
             <div>
-                <h2 class="m-0">230</h2>
+                <h2 class="m-0">{{ user_actif }}</h2>
                 <p class="m-0"><b>Membre de l'équipe</b></p>
             </div>
         </div>
@@ -17,7 +17,7 @@
                 <font-awesome-icon :icon="['fas', 'clock']" style="font-size: 40px; color: #ff4040;" aria-hidden="true" />
             </div>
             <div>
-                <h2 class="m-0">5</h2>
+                <h2 class="m-0">{{ retard_rh }}</h2>
                 <p class="m-0"><b>En retard aujourd'hui</b></p>
             </div>
         </div>
@@ -27,7 +27,7 @@
                 <font-awesome-icon :icon="['fas', 'gavel']" style="font-size: 40px; color: #FFA500;" aria-hidden="true" />
             </div>
             <div>
-                <h2 class="m-0">0</h2>
+                <h2 class="m-0">{{ sanction_rh }}</h2>
                 <p class="m-0"><b>Sanction enregistrée aujourd'hui</b></p>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <font-awesome-icon :icon="['fas', 'user-slash']" style="font-size: 40px; color: #6C757D;" aria-hidden="true" />
             </div>
             <div>
-                <h2 class="m-0">0</h2>
+                <h2 class="m-0">{{ abs_rh }}</h2>
                 <p class="m-0"><b>Absence</b></p>
             </div>
         </div>
@@ -51,7 +51,9 @@
             </div>
             <div class="chart-container">
                 <h3 class="mb-2 centered">Récap du mois <font-awesome-icon :icon="['fas', 'chart-pie']" style="font-size: 30px; color: #16738A;" aria-hidden="true" /></h3>
-                <ChartCircu style="width: 400px; height: 400px;" class="centered"/>
+                <div class="centered">
+                    <ChartCircu style="width: 400px; height: 400px;"/>
+                </div>
             </div>
         </div>
 
@@ -102,11 +104,65 @@
 </template>
 
 <script>
-    import ChartBars from '../rh/ChartBars.vue'
-    import ChartCircu from '../rh/ChartCircu.vue';
+    import ChartBars from './ChartBars.vue'
+    import ChartCircu from './ChartCircu.vue';
+    import api from "../../api";
+    import { parseJwt } from '../../utils/jwt';
 
     export default {
-        components: { ChartBars, ChartCircu }
-    }
-</script>
+        components: { ChartBars, ChartCircu },
 
+        data() {
+            return {
+                user_actif: 0,
+                abs_rh: 0,
+                sanction_rh: 0,
+                retard_rh: 0,
+            };
+        },
+
+        async mounted() {
+            try {
+                let connected = null
+
+                if (!sessionStorage.getItem('token')) {
+                this.$router.push('/')
+                return
+                } else {
+                connected = parseJwt(sessionStorage.getItem('token'))
+                }
+
+                const [user, abs, sanction, retard, vigie] = await Promise.all([
+                    api.post('count_user_rh',{
+                        matricule: connected.matricule,
+                        roles: 'MANAGER',
+                        all: false
+                    }),
+                    api.post('count_absence_rh',{
+                        matricule: connected.matricule,
+                        roles: 'MANAGER',
+                        all: false
+                    }),
+                    api.post('count_sanction_rh',{
+                        matricule: connected.matricule,
+                        roles: 'MANAGER',
+                        all: false
+                    }),
+                    api.post('count_retard_rh',{
+                        matricule: connected.matricule,
+                        roles: 'MANAGER',
+                        all: false
+                    })
+                ]);
+
+                this.user_actif = user.data
+                this.abs_rh = abs.data;
+                this.sanction_rh = sanction.data;
+                this.retard_rh = retard.data;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
+</script>

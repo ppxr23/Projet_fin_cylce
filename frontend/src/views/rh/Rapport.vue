@@ -3,12 +3,12 @@
 
     <div class="mt-4 d-flex flex-column col-md-5">
         <h5>Nom du rapport </h5>
-        <input type="text" name="" id="" class="form-control form-control-lg">
+        <input type="text" name="" id="" class="form-control form-control-lg" v-model="nomRapport">
     </div>
 
     <div class="mt-4 d-flex flex-column col-md-5">
         <h5>Type de rapport </h5>
-        <select class="form-select form-select-lg md-1">
+        <select class="form-select form-select-lg md-1" v-model="typeRapport">
             <option value="1">Résumé</option>
             <option value="2">KPI</option>
         </select>
@@ -17,28 +17,28 @@
     <h5 class="mt-4">Période </h5>
      <div class="mt-2 d-flex col-md-5 gap-5">
         <div class="form-check">
-            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio1" value="option1" checked>
+            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio1" value="1" v-model="periode" checked>
             <label class="form-check-label form-check-label-lg" for="radio1">
                 Journalière
             </label>
         </div>
         
         <div class="form-check">
-            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio2" value="option2">
+            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio2" value="2" v-model="periode">
             <label class="form-check-label form-check-label-lg" for="radio2">
                 Hebdomadaire
             </label>
         </div>
         
         <div class="form-check">
-            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio3" value="option3">
+            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio3" value="3" v-model="periode">
             <label class="form-check-label form-check-label-lg" for="radio3">
                 Mensuelle
             </label>
         </div>
 
         <div class="form-check">
-            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio4" value="option4">
+            <input class="form-check-input form-check-input-lg" type="radio" name="exampleRadios" id="radio4" value="4" v-model="periode">
             <label class="form-check-label form-check-label-lg" for="radio4">
                 Annuelle
             </label>
@@ -48,11 +48,67 @@
 
     <h4 class="mt-5">Description :</h4>
     <div class="col-md-5 d-flex flex-column gap-4 mt-3">
-        <input type="text" class="form-control"style="height: 100px;">
+        <input type="text" class="form-control"style="height: 100px;" v-model="description">
         <div class="d-flex w-100 justify-content-between">
             <button type="button" class="btn btn-secondary btn-lg" style="width: 45%;">Annuler</button>
-            <button type="button" class="btn btn-primary btn-lg" style="width: 45%;">Créer</button>
+            <button type="button" class="btn btn-primary btn-lg" style="width: 45%;" @click="download">Créer</button>
         </div>
     </div>
 
 </template>
+<script>
+import api from '../../api'
+import { parseJwt } from '../../utils/jwt'
+
+export default {
+    data() {
+        return {
+            nomRapport: '',
+            typeRapport: '1',
+            periode: '1',
+            description: ''
+        }
+    },
+
+    methods: {
+        async download() {
+            try {
+                let connecte = null;
+
+                if (!sessionStorage.getItem('token')) {
+                    this.$router.push('/')
+                    return
+                } else {
+                    connecte = parseJwt(sessionStorage.getItem('token'))
+                }
+
+                const params = {
+                    nomRapport: this.nomRapport,
+                    typeRapport: this.typeRapport,
+                    periode: this.periode,
+                    description: this.description
+                };
+
+                const res = await api.post('down', {
+                    responseType: 'blob',
+                    matricule: connecte.matricule,
+                    roles: 'RH',
+                    params: params
+                });
+
+                const name_file = this.nomRapport + ".xlsx";
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', name_file);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+}
+</script>

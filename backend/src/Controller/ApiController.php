@@ -20,7 +20,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Request;
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApiController extends AbstractController
 {
@@ -266,7 +269,73 @@ class ApiController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $all_notes = $noteRepository->get_all_notes_team($data['matricule'], $data['roles'], $data['all']);
+        $all_notes   = $noteRepository->get_all_notes_team($data['matricule'], $data['roles'], $data['all']);
         return $this->json($all_notes);
+    }
+
+    #[Route('/api/down', name: 'api_down')]
+    public function downloadExcel(NoteRepository $noteRepository, Request $request)
+    {
+        $typeRapport = $request->query->get('typeRapport');
+        $roles = $request->query->get('roles');
+        $matricule = $request->query->get('matricule');
+
+        $spreadsheet = new Spreadsheet();
+        $sheet1 = $spreadsheet->getActiveSheet();
+
+        if ($typeRapport == 1) {
+            $data1 = $noteRepository->get_all_notes();
+
+            $sheet1->setTitle('Performance par équipe');
+            $sheet1->setCellValue('A1', 'Equipe');
+            $sheet1->setCellValue('B1', 'Note');
+
+            $row = 2;
+            foreach ($data1 as $item) {
+                $sheet1->setCellValue('A' . $row, $item['name']);
+                $sheet1->setCellValue('B' . $row, $item['moyenne']);
+                $row++;
+            }
+
+            foreach (range('A', 'B') as $col) {
+                $sheet1->getColumnDimension($col)->setAutoSize(true);
+            }
+        } else {
+            if ($roles == 'RH') {
+                $data1 = $noteRepository->get_all_notes_pers();
+            } else {
+                $data1 = $noteRepository->get_all_notes_team($matricule, $roles);
+            }
+
+            $sheet1->setTitle('Performance par collaborateur');
+            $sheet1->setCellValue('A1', 'Matricule');
+            $sheet1->setCellValue('B1', 'Nom');
+            $sheet1->setCellValue('C1', 'Prénom');
+            $sheet1->setCellValue('D1', 'Note');
+
+            $row = 2;
+            foreach ($data1 as $item) {
+                $sheet1->setCellValue('A' . $row, $item['matricule']);
+                $sheet1->setCellValue('B' . $row, $item['name']);
+                $sheet1->setCellValue('C' . $row, $item['firstname']);
+                $sheet1->setCellValue('D' . $row, $item['moyenne']);
+                $row++;
+            }
+
+            foreach (range('A', 'D') as $col) {
+                $sheet1->getColumnDimension($col)->setAutoSize(true);
+            }
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $response = new StreamedResponse(function() use ($writer) {
+            $writer->save('php://output');
+        });
+
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export.xlsx"');
+        $response->headers->set('Cache-Control', 'max-age=0');
+
+        return $response;
     }
 }
