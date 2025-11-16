@@ -59,7 +59,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./backend
-        run: composer install --prefer-dist --no-progress --no-scripts
+        run: composer install --prefer-dist --no-progress --no-scripts --dev
 
       - name: Run Symfony setup scripts
         working-directory: ./backend
