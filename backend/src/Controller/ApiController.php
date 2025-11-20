@@ -18,13 +18,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApiController extends AbstractController
@@ -32,30 +29,26 @@ class ApiController extends AbstractController
     #[Route('/api/deconnexion', name: 'api_deconnexion', methods: ['POST'])]
     public function deconnexion(UserInterface $user, EntityManagerInterface $em): JsonResponse
     {
-        if (!$user instanceof \App\Entity\User) {
-            return new JsonResponse([
-                'error' => 'Utilisateur invalide'
-            ], Response::HTTP_BAD_REQUEST);
+        if (!$user instanceof User) {
+            return $this->json(['error' => 'Utilisateur invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
-        $user->setLastConnexion($newDate);
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Indian/Antananarivo'));
+        $user->setLastConnexion($now);
 
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse([
+        return $this->json([
             'message' => 'Déconnexion réussie',
-            'last_connexion' => $user->getLastConnexion()->format('Y-m-d H:i:s')
+            'last_connexion' => $user->getLastConnexion()?->format('Y-m-d H:i:s'),
         ], Response::HTTP_OK);
     }
 
-
     #[Route('/api/list_users', name: 'api_list_users', methods: ['GET'])]
-    public function list_users(): JsonResponse
+    public function list_users(UserRepository $userRepository): JsonResponse
     {
-        $users = $this->userRepository->findAll();
-
+        $users = $userRepository->findAll();
         $data = [];
 
         foreach ($users as $user) {
@@ -84,22 +77,29 @@ class ApiController extends AbstractController
     }
 
     #[Route('/api/add_user', name: 'api_add_user', methods: ['POST'])]
-    public function addUser(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
-    {
+    public function addUser(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
+        if (!is_array($data)) {
+            return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
+        }
+
         $user = new User();
-        $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Indian/Antananarivo'));
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password'] ?? 'vivetic');
-        
+
         $user->setEmail($data['email'] ?? '');
-        $user->setRoles($data['roles'] ?? '');
+        $user->setRoles($data['roles'] ?? []);
         $user->setName($data['name'] ?? '');
         $user->setFirstname($data['firstname'] ?? '');
         $user->setPassword($hashedPassword);
-        $user->setStatut($data['statut'] ?? '');
-        $user->setDateCreation($newDate);
-        $user->setLastConnexion($newDate);
+        $user->setStatut($data['statut'] ?? 0);
+        $user->setDateCreation($now);
+        $user->setLastConnexion($now);
         $user->setMatricule($data['matricule'] ?? '');
         $user->setVigie(0);
 
@@ -109,39 +109,31 @@ class ApiController extends AbstractController
         return $this->json(['message' => 'Utilisateur ajouté avec succès'], Response::HTTP_CREATED);
     }
 
-    #[Route('/api/update_user/{id}', name: 'api_update_user', methods: ['PUT', 'PATCH'])]
-    public function updateUser( int $id, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher
+    #[Route('/api/update_user/{id}', name: 'api_update_user', methods: ['PUT','PATCH'])]
+    public function updateUser(
+        int $id,
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
         $user = $em->getRepository(User::class)->find($id);
-
         if (!$user) {
-            return $this->json(['message' => 'Utilisateur introuvable'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Utilisateur introuvable'], Response::HTTP_NOT_FOUND);
         }
 
         $data = json_decode($request->getContent(), true);
-
-        if (isset($data['email'])) {
-            $user->setEmail($data['email']);
+        if (!is_array($data)) {
+            return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
         }
 
-        if (isset($data['roles'])) {
-            $user->setRoles($data['roles']);
-        }
-
-        if (isset($data['name'])) {
-            $user->setName($data['name']);
-        }
-
-        if (isset($data['firstname'])) {
-            $user->setFirstname($data['firstname']);
-        }
-
-        if (isset($data['statut'])) {
-            $user->setStatut($data['statut']);
-        }
-
-        if (isset($data['matricule'])) {
-            $user->setMatricule($data['matricule']);
+        if (isset($data['email'])) $user->setEmail($data['email']);
+        if (isset($data['roles'])) $user->setRoles($data['roles']);
+        if (isset($data['name'])) $user->setName($data['name']);
+        if (isset($data['firstname'])) $user->setFirstname($data['firstname']);
+        if (isset($data['statut'])) $user->setStatut($data['statut']);
+        if (isset($data['matricule'])) $user->setMatricule($data['matricule']);
+        if (isset($data['password'])) {
+            $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
         }
 
         $em->flush();
@@ -153,15 +145,13 @@ class ApiController extends AbstractController
     public function addFeedback(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
-        if (!$data) {
-            return $this->json(['message' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
+        if (!is_array($data)) {
+            return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
         }
 
         $feedback = new Feedback();
-        $now = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('Indian/Antananarivo'));
 
-        // Récupération des données envoyées depuis le frontend
         $feedback->setMatriculeConcerned($data['matricule_concerned'] ?? 0);
         $feedback->setMatriculeInsert($data['matricule_insert'] ?? 0);
         $feedback->setDateInserted($now);
@@ -183,155 +173,73 @@ class ApiController extends AbstractController
     public function list_user_rh(UserRepository $userRepository, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) {
+            return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
+        }
 
-        $users = $userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all']);
-        
-        return $this->json($users);
+        $users = $userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all'] ?? false);
+        return $this->json($users, Response::HTTP_OK);
     }
 
     #[Route('/api/count_user_rh', name: 'api_count_user_rh', methods: ['POST'])]
     public function count_user_rh(UserRepository $userRepository, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
 
-        $count_users = count($userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_users);
-    }
-
-    #[Route('/api/count_absence_rh', name: 'api_count_absence_rh', methods: ['POST'])]
-    public function count_absence_rh(AbsenceRepository $absenceRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_absences = count($absenceRepository->get_absence_today($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_absences);
-    }
-
-    #[Route('/api/count_sanction_rh', name: 'api_count_sanction_rh', methods: ['POST'])]
-    public function count_sanction_rh(SanctionRepository $sanctionRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_sanctions = count($sanctionRepository->get_sanction_today($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_sanctions);
-    }
-
-    #[Route('/api/count_retard_rh', name: 'api_count_retard_rh', methods: ['POST'])]
-    public function count_retard_rh(RetardRepository $retardRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_retards = count($retardRepository->get_retard_today($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_retards);
-    }
-
-    #[Route('/api/count_retard_month', name: 'api_count_retard_month', methods: ['POST'])]
-    public function count_retard_month(RetardRepository $retardRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_retards_month = count($retardRepository->get_retard_month($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_retards_month);
-    }
-
-    #[Route('/api/count_sanction_month', name: 'api_count_sanction_month', methods: ['POST'])]
-    public function count_sanction_month(SanctionRepository $sanctionRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_sanctions_month = count($sanctionRepository->get_sanction_month($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_sanctions_month);
-    }
-
-    #[Route('/api/count_absence_month', name: 'api_count_absence_month', methods: ['POST'])]
-    public function count_absence_month(AbsenceRepository $absenceRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $count_absence_month = count($absenceRepository->get_absence_month($data['matricule'], $data['roles'], $data['all']));
-        return $this->json($count_absence_month);
-    }
-
-    #[Route('/api/all_vigie', name: 'api_all_vigie', methods: ['GET'])]
-    public function all_vigie(VigieRepository $vigieRepository): JsonResponse
-    {
-        $all_vigie = $vigieRepository->get_all_vigie();
-        return $this->json($all_vigie);
-    }
-
-    #[Route('/api/all_note', name: 'api_all_note', methods: ['GET'])]
-    public function all_note(NoteRepository $noteRepository): JsonResponse
-    {
-        $all_note = $noteRepository->get_all_notes();
-        return $this->json($all_note);
-    }
-
-    #[Route('/api/all_note_team', name: 'api_all_note_team', methods: ['POST'])]
-    public function all_note_team(NoteRepository $noteRepository, Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $all_notes   = $noteRepository->get_all_notes_team($data['matricule'], $data['roles'], $data['all']);
-        return $this->json($all_notes);
+        $count = count($userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all'] ?? false));
+        return $this->json($count, Response::HTTP_OK);
     }
 
     #[Route('/api/down', name: 'api_down')]
-    public function downloadExcel(NoteRepository $noteRepository, Request $request)
+    public function downloadExcel(NoteRepository $noteRepository, Request $request): StreamedResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $typeRapport = $data['params']['typeRapport'];
-        $roles = $data['roles'];
-        $matricule = $data['matricule'];
+        $typeRapport = $data['params']['typeRapport'] ?? 1;
+        $roles = $data['roles'] ?? '';
+        $matricule = $data['matricule'] ?? '';
 
         $spreadsheet = new Spreadsheet();
-        $sheet1 = $spreadsheet->getActiveSheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
         if ($typeRapport == 1) {
-            $data1 = $noteRepository->get_all_notes();
-
-            $sheet1->setTitle('Performance par équipe');
-            $sheet1->setCellValue('A1', 'Equipe');
-            $sheet1->setCellValue('B1', 'Note');
+            $notes = $noteRepository->get_all_notes();
+            $sheet->setTitle('Performance par équipe');
+            $sheet->setCellValue('A1', 'Equipe');
+            $sheet->setCellValue('B1', 'Note');
 
             $row = 2;
-            foreach ($data1 as $item) {
-                $sheet1->setCellValue('A' . $row, $item['name']);
-                $sheet1->setCellValue('B' . $row, $item['moyenne']);
+            foreach ($notes as $item) {
+                $sheet->setCellValue('A'.$row, $item['name']);
+                $sheet->setCellValue('B'.$row, $item['moyenne']);
                 $row++;
             }
 
-            foreach (range('A', 'B') as $col) {
-                $sheet1->getColumnDimension($col)->setAutoSize(true);
-            }
+            foreach (range('A', 'B') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
         } else {
-            if ($roles == 'RH') {
-                $data1 = $noteRepository->get_all_notes_pers();
-            } else {
-                $data1 = $noteRepository->get_all_notes_team($matricule, $roles);
-            }
+            $notes = $roles === 'RH' ? $noteRepository->get_all_notes_pers() : $noteRepository->get_all_notes_team($matricule, $roles);
 
-            $sheet1->setTitle('Performance par collaborateur');
-            $sheet1->setCellValue('A1', 'Matricule');
-            $sheet1->setCellValue('B1', 'Nom');
-            $sheet1->setCellValue('C1', 'Prénom');
-            $sheet1->setCellValue('D1', 'Note');
+            $sheet->setTitle('Performance par collaborateur');
+            $sheet->setCellValue('A1', 'Matricule');
+            $sheet->setCellValue('B1', 'Nom');
+            $sheet->setCellValue('C1', 'Prénom');
+            $sheet->setCellValue('D1', 'Note');
 
             $row = 2;
-            foreach ($data1 as $item) {
-                $sheet1->setCellValue('A' . $row, $item['matricule']);
-                $sheet1->setCellValue('B' . $row, $item['name']);
-                $sheet1->setCellValue('C' . $row, $item['firstname']);
-                $sheet1->setCellValue('D' . $row, $item['moyenne']);
+            foreach ($notes as $item) {
+                $sheet->setCellValue('A'.$row, $item['matricule']);
+                $sheet->setCellValue('B'.$row, $item['name']);
+                $sheet->setCellValue('C'.$row, $item['firstname']);
+                $sheet->setCellValue('D'.$row, $item['moyenne']);
                 $row++;
             }
 
-            foreach (range('A', 'D') as $col) {
-                $sheet1->getColumnDimension($col)->setAutoSize(true);
-            }
+            foreach (range('A', 'D') as $col) $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
         $writer = new Xlsx($spreadsheet);
+
         $response = new StreamedResponse(function() use ($writer) {
             $writer->save('php://output');
         });
@@ -347,17 +255,19 @@ class ApiController extends AbstractController
     public function all_anomalie(UserRepository $userRepository, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
 
-        $all_anomalie   = $userRepository->get_anomalie($data['matricule'], $data['roles']);
-        return $this->json($all_anomalie);
+        $all = $userRepository->get_anomalie($data['matricule'], $data['roles']);
+        return $this->json($all, Response::HTTP_OK);
     }
 
     #[Route('/api/all_feedback', name: 'api_all_feedback', methods: ['POST'])]
     public function all_feedback(FeedbackRepository $feedbackRepository, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        if (!is_array($data)) return $this->json(['error' => 'Données invalides'], Response::HTTP_BAD_REQUEST);
 
-        $all_feedback   = $feedbackRepository->get_feedback($data['matricule'], $data['roles']);
-        return $this->json($all_feedback);
+        $all = $feedbackRepository->get_feedback($data['matricule'], $data['roles']);
+        return $this->json($all, Response::HTTP_OK);
     }
 }
