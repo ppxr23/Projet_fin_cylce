@@ -140,22 +140,22 @@
           <div
             class="d-flex gap-2 align-items-center w-100 m-0  anomalie"
             style="border-bottom: 2px solid #00000028;"
-            v-for="(anomalie_rh, index) in anomalie_rh.filter(a => a.matricule !== connected.matricule)"
+            v-for="(anomali, index) in anomalie_rh.filter(a => a.matricule !== connected.matricule)"
             :key="index"
           >
-            <span v-if="anomalie_rh.degree == 2" class="danger centered" style="width: 100px;">Elevés</span>
-            <span v-if="anomalie_rh.degree == 1" class="warning centered" style="width: 100px;">Moyennes</span>
+            <span v-if="anomali.degree == 2" class="danger centered" style="width: 100px;">Elevés</span>
+            <span v-if="anomali.degree == 1" class="warning centered" style="width: 100px;">Moyennes</span>
             <div>
               <h5 class="m-0">
-                {{ anomalie_rh.name }} {{ anomalie_rh.firstname }}
+                {{ anomali.name }} {{ anomali.firstname }}
               </h5>
-              <p class="m-0" v-if="anomalie_rh.type_anomalie == 3">
+              <p class="m-0" v-if="anomali.type_anomalie == 3">
                 Absences fréquente
               </p>
-              <p class="m-0" v-if="anomalie_rh.type_anomalie == 2">
+              <p class="m-0" v-if="anomali.type_anomalie == 2">
                 Retards fréquente
               </p>
-              <p class="m-0" v-if="anomalie_rh.type_anomalie == 1">
+              <p class="m-0" v-if="anomali.type_anomalie == 1">
                 Sanctions fréquente
               </p>
             </div>
@@ -180,19 +180,19 @@
           <div
             class="d-flex gap-2 align-items-center w-100 m-0  anomalie"
             style="border-bottom: 2px solid #00000028;"
-            v-for="(feedback_rh, index) in feedback_rh"
+            v-for="(feedback, index) in feedback_rh"
             :key="index"
           >
-            <span v-if="feedback_rh.note >= 8" class="success centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
-            <span v-if="feedback_rh.note >= 5 && feedback_rh.note < 8" class="warning centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
-            <span v-if="feedback_rh.note < 5" class="danger centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
+            <span v-if="feedback.note >= 8" class="success centered" style="width: 200px; height: 60px;">{{ feedback.name }} {{ feedback.firstname }}</span>
+            <span v-if="feedback.note >= 5 && feedback.note < 8" class="warning centered" style="width: 200px; height: 60px;">{{ feedback.name }} {{ feedback.firstname }}</span>
+            <span v-if="feedback.note < 5" class="danger centered" style="width: 200px; height: 60px;">{{ feedback.name }} {{ feedback.firstname }}</span>
             
             <div>
               <h5 class="m-0">
-                <u>Note:</u> {{ feedback_rh.note }}
+                <u>Note:</u> {{ feedback.note }}
               </h5>
               <p class="m-0">
-                <u>Commentaire:</u> {{ feedback_rh.commentaire }}
+                <u>Commentaire:</u> {{ feedback.commentaire }}
               </p>
             </div>
           </div>
