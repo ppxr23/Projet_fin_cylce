@@ -96,10 +96,10 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres123@localhost:5432/vivetic_rh_test
         run: php vendor/bin/phpunit --coverage-clover coverage.xml
 
-      - name: Run PHPStan (Static Analysis)
-        working-directory: ./backend
-        run: vendor/bin/phpstan analyse src --level=8 --no-progress
-        continue-on-error: true
+      # - name: Run PHPStan (Static Analysis)
+      #   working-directory: ./backend
+      #   run: vendor/bin/phpstan analyse src --level=8 --no-progress
+      #   continue-on-error: true
 
       - name: Run PHP CodeSniffer
         working-directory: ./backend

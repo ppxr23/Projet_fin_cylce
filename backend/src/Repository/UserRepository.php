@@ -33,7 +33,7 @@ class UserRepository extends ServiceEntityRepository
     /**
      * Récupère tous les utilisateurs actifs, avec filtre par vigie et rôle
      */
-    public function get_all_user_actif($matricule = null, $roles = null, $all = false)
+    public function get_all_user_actif($matricule = null, $roles = null, $all = false): array
     {
         $em = $this->getEntityManager();
 
@@ -88,7 +88,7 @@ class UserRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function get_anomalie($matricule = null, $roles = null)
+    public function get_anomalie($matricule = null, $roles = null) :array
     {
         $cnx = $this->getEntityManager()->getConnection();
 

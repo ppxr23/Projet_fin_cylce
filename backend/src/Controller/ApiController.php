@@ -29,15 +29,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApiController extends AbstractController
 {
+
     #[Route('/api/deconnexion', name: 'api_deconnexion', methods: ['POST'])]
     public function deconnexion(UserInterface $user, EntityManagerInterface $em): JsonResponse
     {
-        if (!$user instanceof \App\Entity\User) {
-            return new JsonResponse([
-                'error' => 'Utilisateur invalide'
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
         $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
         $user->setLastConnexion($newDate);
 
@@ -46,13 +41,9 @@ class ApiController extends AbstractController
 
         return new JsonResponse([
             'message' => 'Déconnexion réussie',
-            'last_connexion' => $user->getLastConnexion()
-                ? $user->getLastConnexion()->format('Y-m-d H:i:s')
-                : null
+            'last_connexion' => $user->getLastConnexion()->format('Y-m-d H:i:s')
         ], Response::HTTP_OK);
-
     }
-
 
     #[Route('/api/list_users', name: 'api_list_users', methods: ['GET'])]
     public function list_users(UserRepository $userRepository): JsonResponse
@@ -101,8 +92,8 @@ class ApiController extends AbstractController
         $user->setFirstname($data['firstname'] ?? '');
         $user->setPassword($hashedPassword);
         $user->setStatut($data['statut'] ?? '');
-        $user->setDateCreation($newDate);
-        $user->setLastConnexion($newDate);
+        $user->setDateCreation($newDate ?? '');
+        $user->setLastConnexion($newDate ?? '');
         $user->setMatricule($data['matricule'] ?? '');
         $user->setVigie(0);
 
@@ -274,12 +265,12 @@ class ApiController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $all_notes   = $noteRepository->get_all_notes_team($data['matricule'], $data['roles']);
+        $all_notes   = $noteRepository->get_all_notes_team($data['matricule'], $data['roles'], $data['all']);
         return $this->json($all_notes);
     }
 
     #[Route('/api/down', name: 'api_down')]
-    public function downloadExcel(NoteRepository $noteRepository, Request $request) :StreamedResponse
+    public function downloadExcel(NoteRepository $noteRepository, Request $request)
     {
         $data = json_decode($request->getContent(), true);
 
