@@ -85,7 +85,7 @@ class NoteRepository extends ServiceEntityRepository
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
-    public function get_all_notes_team($matricule = null, $roles = null, $all = false): array 
+    public function get_all_notes_team($matricule = null, $roles = null): array 
     {
         $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
         

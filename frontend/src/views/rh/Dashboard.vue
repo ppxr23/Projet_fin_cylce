@@ -131,43 +131,41 @@
             aria-hidden="true"
           />
         </h3>
+        
         <div
           class="m-2 d-flex flex-column p-2"
-          style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;"
-        >
+          style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: 400px; overflow-y: scroll;"
+          
+          >
           <div
             class="d-flex gap-2 align-items-center w-100 m-0  anomalie"
             style="border-bottom: 2px solid #00000028;"
+            v-for="(anomalie_rh, index) in anomalie_rh.filter(a => a.matricule !== connected.matricule)"
+            :key="index"
           >
-            <span class="danger centered">Elevés</span>
+            <span v-if="anomalie_rh.degree == 2" class="danger centered" style="width: 100px;">Elevés</span>
+            <span v-if="anomalie_rh.degree == 1" class="warning centered" style="width: 100px;">Moyennes</span>
             <div>
               <h5 class="m-0">
-                Jean Dupont
+                {{ anomalie_rh.name }} {{ anomalie_rh.firstname }}
               </h5>
-              <p class="m-0">
+              <p class="m-0" v-if="anomalie_rh.type_anomalie == 3">
                 Absences fréquente
+              </p>
+              <p class="m-0" v-if="anomalie_rh.type_anomalie == 2">
+                Retards fréquente
+              </p>
+              <p class="m-0" v-if="anomalie_rh.type_anomalie == 1">
+                Sanctions fréquente
               </p>
             </div>
           </div>
-    
-          <div
-            class="d-flex gap-2 align-items-center w-100 m-0 anomalie"
-            style="border-bottom: 2px solid #00000028;"
-          >
-            <span class="warning centered">Moyennes</span>
-            <div>
-              <h5 class="m-0">
-                Jean Dupont
-              </h5>
-              <p class="m-0">
-                Absences fréquente
-              </p>
-            </div>
-          </div>
+
         </div>
+
       </div>
 
-      <div>
+      <div class="mt-4">
         <h3 class="mb-2 centered">
           Feedback <font-awesome-icon
             :icon="['fas', 'comment-dots']"
@@ -177,37 +175,28 @@
         </h3>
         <div
           class="m-2 d-flex flex-column p-2"
-          style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: max-content; overflow-y: scroll;"
+          style="border: 2px solid #00000028; border-radius: 10px; width: 100%; height: 400px; overflow-y: scroll;"
         >
           <div
             class="d-flex gap-2 align-items-center w-100 m-0  anomalie"
             style="border-bottom: 2px solid #00000028;"
+            v-for="(feedback_rh, index) in feedback_rh"
+            :key="index"
           >
-            <span class="feedback_name centered">Jean Dupont</span>
+            <span v-if="feedback_rh.note >= 8" class="success centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
+            <span v-if="feedback_rh.note >= 5 && feedback_rh.note < 8" class="warning centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
+            <span v-if="feedback_rh.note < 5" class="danger centered" style="width: 200px; height: 60px;">{{ feedback_rh.name }} {{ feedback_rh.firstname }}</span>
+            
             <div>
               <h5 class="m-0">
-                <u>Note:</u> 5
+                <u>Note:</u> {{ feedback_rh.note }}
               </h5>
               <p class="m-0">
-                <u>Commentaire:</u> Soit sérieux
+                <u>Commentaire:</u> {{ feedback_rh.commentaire }}
               </p>
             </div>
           </div>
     
-          <div
-            class="d-flex gap-2 align-items-center w-100 m-0 anomalie"
-            style="border-bottom: 2px solid #00000028;"
-          >
-            <span class="feedback_name centered">Jean Dupont</span>
-            <div>
-              <h5 class="m-0">
-                <u>Note:</u> 5
-              </h5>
-              <p class="m-0">
-                <u>Commentaire:</u> Soit sérieux
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -230,40 +219,49 @@
                 abs_rh: 0,
                 sanction_rh: 0,
                 retard_rh: 0,
+                anomalie_rh: [],
+                feedback_rh: [],
+                connected: 0,
             };
         },
 
         async mounted() {
             try {
-                let connected = null
-
                 if (!sessionStorage.getItem('token')) {
                 this.$router.push('/')
                 return
                 } else {
-                connected = parseJwt(sessionStorage.getItem('token'))
+                  this.connected = parseJwt(sessionStorage.getItem('token'))
                 }
 
-                const [user, abs, sanction, retard] = await Promise.all([
+                const [user, abs, sanction, retard, anomalie, feedback] = await Promise.all([
                     api.post('count_user_rh',{
-                        matricule: connected.matricule,
+                        matricule: this.connected.matricule,
                         roles: 'RH',
                         all: false
                     }),
                     api.post('count_absence_rh',{
-                        matricule: connected.matricule,
+                        matricule: this.connected.matricule,
                         roles: 'RH',
                         all: false
                     }),
                     api.post('count_sanction_rh',{
-                        matricule: connected.matricule,
+                        matricule: this.connected.matricule,
                         roles: 'RH',
                         all: false
                     }),
                     api.post('count_retard_rh',{
-                        matricule: connected.matricule,
+                        matricule: this.connected.matricule,
                         roles: 'RH',
                         all: false
+                    }),
+                    api.post('all_anomalie',{
+                        matricule: this.connected.matricule,
+                        roles: 'RH'
+                    }),
+                    api.post('all_feedback',{
+                        matricule: this.connected.matricule,
+                        roles: 'RH'
                     })
                 ]);
 
@@ -271,6 +269,8 @@
                 this.abs_rh = abs.data;
                 this.sanction_rh = sanction.data;
                 this.retard_rh = retard.data;
+                this.anomalie_rh = anomalie.data;
+                this.feedback_rh = feedback.data;
             } catch (error) {
                 console.error(error);
             }
@@ -278,4 +278,3 @@
     }
 
 </script>
-

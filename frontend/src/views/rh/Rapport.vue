@@ -167,10 +167,11 @@ export default {
                 };
 
                 const res = await api.post('down', {
-                    responseType: 'blob',
-                    matricule: connecte.matricule,
-                    roles: 'RH',
-                    params: params
+                  matricule: connecte.matricule,
+                  roles: 'RH',
+                  params: params
+                },{
+                  responseType: 'blob',
                 });
 
                 const name_file = this.nomRapport + ".xlsx";

@@ -71,8 +71,21 @@
     margin: 20px;
 }
 
+.success {
+    background-color: green;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 5px;
+    height: max-content;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 5px 20px;
+    margin: 20px;
+}
+
 .feedback_name {
-    background-color: grey;
     color: #ffffff;
     font-weight: bold;
     border-radius: 5px;
@@ -106,4 +119,11 @@ button, a {
   display: flex;      /* pour centrer des éléments block */
   justify-content: center;
   align-items: center;
+}
+
+.faible {
+background-color: #198754; /* vert Bootstrap */
+color: white;
+padding: 3px 8px;
+border-radius: 5px;
 }
