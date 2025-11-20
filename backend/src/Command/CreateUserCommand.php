@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/CreateUserCommand.php
 
 namespace App\Command;
@@ -38,7 +39,7 @@ class CreateUserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        
+
         $email = $input->getArgument('email');
         $name = $input->getArgument('name');
         $password = $input->getArgument('password');
@@ -57,11 +58,11 @@ class CreateUserCommand extends Command
         $user = new User();
         $user->setEmail($email);
         $user->setName($name);
-        
+
         // Hasher le mot de passe (le rendre secret)
         $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
-        
+
         // Sauvegarder en base
         $this->entityManager->persist($user);
         $this->entityManager->flush();

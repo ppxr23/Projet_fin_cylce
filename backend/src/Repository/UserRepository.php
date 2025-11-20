@@ -88,7 +88,7 @@ class UserRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function get_anomalie($matricule = null, $roles = null) :array
+    public function get_anomalie($matricule = null, $roles = null): array
     {
         $cnx = $this->getEntityManager()->getConnection();
 
@@ -120,13 +120,11 @@ class UserRepository extends ServiceEntityRepository
                     INNER JOIN users ON users.matricule = anomalie.matricule
                     WHERE number_anomalie > 3
                     ORDER BY number_anomalie DESC, anomalie.matricule   ";
-        
+
             $stmt = $cnx->prepare($sql);
             $stmt->bindValue('start', $start->format('Y-m-d H:i:s'));
-            $stmt->bindValue('end',   $end->format('Y-m-d H:i:s'));
-        }
-        else 
-        {
+            $stmt->bindValue('end', $end->format('Y-m-d H:i:s'));
+        } else {
             $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
 
             $sql = "WITH anomalie AS(
@@ -154,10 +152,10 @@ class UserRepository extends ServiceEntityRepository
                     INNER JOIN users ON users.matricule = anomalie.matricule
                     WHERE number_anomalie > 3 AND users.vigie = :vigie
                     ORDER BY number_anomalie DESC, anomalie.matricule";
-        
+
             $stmt = $cnx->prepare($sql);
             $stmt->bindValue('start', $start->format('Y-m-d H:i:s'));
-            $stmt->bindValue('end',   $end->format('Y-m-d H:i:s'));
+            $stmt->bindValue('end', $end->format('Y-m-d H:i:s'));
             $stmt->bindValue('vigie', $vigie ? $vigie->getId() : null);
         }
 

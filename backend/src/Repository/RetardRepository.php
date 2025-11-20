@@ -43,9 +43,7 @@ class RetardRepository extends ServiceEntityRepository
                 )
                 ->setParameter('today', $today->format('Y-m-d'))
                 ->getResult();
-            }
-            else
-            {
+            } else {
                 $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
 
                 return $this->getEntityManager()->createQuery(
@@ -55,7 +53,6 @@ class RetardRepository extends ServiceEntityRepository
                 ->setParameter('today', $today->format('Y-m-d'))
                 ->setParameter('vigie', $vigie)
                 ->getResult();
-
             }
         }
     }
@@ -65,9 +62,8 @@ class RetardRepository extends ServiceEntityRepository
         if (!$all) {
             $start = new \DateTime('first day of this month 00:00:00');
             $end = new \DateTime('last day of this month 23:59:59');
-    
-            if ($roles == 'RH')
-            {
+
+            if ($roles == 'RH') {
                 return $this->getEntityManager()->createQuery(
                     'SELECT r FROM App\Entity\Retard r 
                     WHERE r.date BETWEEN :start AND :end'
@@ -75,10 +71,7 @@ class RetardRepository extends ServiceEntityRepository
                 ->setParameter('start', $start)
                 ->setParameter('end', $end)
                 ->getResult();
-            }
-
-            else
-            {
+            } else {
                 $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
 
                 return $this->getEntityManager()->createQuery(

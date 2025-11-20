@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/ApiController.php
 
 namespace App\Controller;
@@ -29,7 +30,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ApiController extends AbstractController
 {
-
     #[Route('/api/deconnexion', name: 'api_deconnexion', methods: ['POST'])]
     public function deconnexion(UserInterface $user, EntityManagerInterface $em): JsonResponse
     {
@@ -85,7 +85,7 @@ class ApiController extends AbstractController
         $user = new User();
         $newDate = new \DateTime('now', new \DateTimeZone('Indian/Antananarivo'));
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password'] ?? 'vivetic');
-        
+
         $user->setEmail($data['email'] ?? '');
         $user->setRoles($data['roles'] ?? '');
         $user->setName($data['name'] ?? '');
@@ -104,8 +104,8 @@ class ApiController extends AbstractController
     }
 
     #[Route('/api/update_user/{id}', name: 'api_update_user', methods: ['PUT', 'PATCH'])]
-    public function updateUser( int $id, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher
-    ): JsonResponse {
+    public function updateUser(int $id, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    {
         $user = $em->getRepository(User::class)->find($id);
 
         if (!$user) {
@@ -179,7 +179,7 @@ class ApiController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $users = $userRepository->get_all_user_actif($data['matricule'], $data['roles'], $data['all']);
-        
+
         return $this->json($users);
     }
 
@@ -326,7 +326,7 @@ class ApiController extends AbstractController
         }
 
         $writer = new Xlsx($spreadsheet);
-        $response = new StreamedResponse(function() use ($writer) {
+        $response = new StreamedResponse(function () use ($writer) {
             $writer->save('php://output');
         });
 

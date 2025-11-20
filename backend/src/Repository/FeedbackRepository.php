@@ -30,15 +30,14 @@ class FeedbackRepository extends ServiceEntityRepository
         return $vigieId ? (int)$vigieId : null;
     }
 
-    public function get_feedback($matricule = null, $roles = null) :array
+    public function get_feedback($matricule = null, $roles = null): array
     {
         $cnx = $this->getEntityManager()->getConnection();
-        
+
         $start = new \DateTime('first day of this month 00:00:00');
         $end   = new \DateTime('last day of this month 23:59:59');
 
-        if ($roles == 'RH')     
-        {
+        if ($roles == 'RH') {
             $sql = "SELECT
                         matricule_concerned AS matricule,
                         commentary AS commentaire,
@@ -48,13 +47,11 @@ class FeedbackRepository extends ServiceEntityRepository
                     FROM feedback
                     INNER JOIN users ON users.matricule = feedback.matricule_concerned
                     WHERE date_inserted BETWEEN :start AND :end";
-            
+
             $stmt = $cnx->prepare($sql);
-        }
-        elseif ($roles == 'MANAGER')
-        {
+        } elseif ($roles == 'MANAGER') {
             $vigie = $matricule ? $this->getVigieByMatricule($matricule) : null;
-            
+
             $sql = "SELECT
                         matricule_concerned AS matricule,
                         commentary AS commentaire,
@@ -64,13 +61,11 @@ class FeedbackRepository extends ServiceEntityRepository
                     FROM feedback
                     INNER JOIN users ON users.matricule = feedback.matricule_concerned
                     WHERE date_inserted BETWEEN :start AND :end AND (vigie = :vigie OR matricule_concerned = :matricule)";
-            
+
             $stmt = $cnx->prepare($sql);
             $stmt->bindValue('matricule', $matricule);
             $stmt->bindValue('vigie', $vigie);
-        }
-        else
-        {
+        } else {
             $sql = "SELECT
                         matricule_concerned AS matricule,
                         commentary AS commentaire,
@@ -80,13 +75,13 @@ class FeedbackRepository extends ServiceEntityRepository
                     FROM feedback
                     INNER JOIN users ON users.matricule = feedback.matricule_concerned
                     WHERE date_inserted BETWEEN :start AND :end AND matricule_concerned = :matricule";
-            
+
             $stmt = $cnx->prepare($sql);
             $stmt->bindValue('matricule', $matricule);
         }
 
         $stmt->bindValue('start', $start->format('Y-m-d H:i:s'));
-        $stmt->bindValue('end',   $end->format('Y-m-d H:i:s'));
+        $stmt->bindValue('end', $end->format('Y-m-d H:i:s'));
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
